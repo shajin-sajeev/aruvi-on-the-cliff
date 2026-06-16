@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@yield('title', 'Aruvi on the Cliff - Luxury Beachside Resort')</title>
+    <meta name="description" content="@yield('meta_description', 'A premium luxury beachside resort with online booking, dining, gallery, amenities, and CMS-managed content.')">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="{{ asset('css/resort.css') }}" rel="stylesheet">
+</head>
+<body data-bs-spy="scroll" data-bs-target="#nav" data-bs-offset="90">
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand brand-mark d-flex align-items-center gap-2" href="{{ route('home') }}#home">
+            <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}" alt="Aruvi on the Cliff" class="brand-logo">
+            @if(isset($settings['site_brand_image']))
+                <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 32px; max-width: 160px; object-fit: contain;">
+            @else
+                <span>Aruvi on the Cliff</span>
+            @endif
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
+        <div id="nav" class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#rooms">Rooms</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#amenities">Amenities</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#dining">Dining</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#gallery">Gallery</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#contact">Contact</a></li>
+                @auth
+                    @if(auth()->user()->isAdmin())<li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin</a></li>@endif
+                @endauth
+                <li class="nav-item"><a class="btn btn-teal ms-lg-2" href="{{ route('booking.create') }}">Book Now</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+@if(session('success'))
+    <div class="container alert-wrap"><div class="alert alert-success mb-0">{{ session('success') }}</div></div>
+@endif
+@if($errors->any())
+    <div class="container alert-wrap"><div class="alert alert-danger mb-0">{{ $errors->first() }}</div></div>
+@endif
+
+<main>@yield('content')</main>
+
+<footer class="footer section pb-4" id="footer">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-4 col-md-6">
+                <div class="footer-brand mb-3">
+                    <a href="{{ route('home') }}#home" class="d-flex align-items-center gap-3 text-decoration-none">
+                        @if(isset($settings['site_brand_image']))
+                            <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 48px; max-width: 180px; object-fit: contain;">
+                        @else
+                            <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}" alt="Aruvi Logo" class="footer-logo" style="height: 48px; {{ !isset($settings['site_logo']) || str_contains($settings['site_logo'], 'logo.svg') ? 'filter: brightness(0) invert(1);' : '' }}">
+                            <span class="text-white fs-4 fw-bold font-serif">Aruvi on the Cliff</span>
+                        @endif
+                    </a>
+                </div>
+                <p class="text-muted mb-4 lead-sm">An architectural tribute to the beauty of the coast. Experience the tranquil overlap of luxury, sea breeze, and cliffside dining.</p>
+                @isset($socialLinks)
+                    <div class="social-row d-flex gap-3">
+                        @foreach($socialLinks as $social)
+                            @php
+                                $iconClass = match(strtolower($social->platform)) {
+                                    'instagram' => 'bi-instagram',
+                                    'facebook' => 'bi-facebook',
+                                    'youtube' => 'bi-youtube',
+                                    'twitter', 'x' => 'bi-twitter-x',
+                                    'linkedin' => 'bi-linkedin',
+                                    default => 'bi-link-45deg'
+                                };
+                            @endphp
+                            <a href="{{ $social->url }}" target="_blank" rel="noopener" aria-label="{{ $social->platform }}" class="social-link-item">
+                                <i class="bi {{ $iconClass }}"></i>
+                            </a>
+                        @endforeach
+                    </div>
+                @endisset
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <h6 class="footer-title text-white uppercase tracking-wider mb-4">Contact Us</h6>
+                <ul class="list-unstyled footer-contact-list">
+                    <li class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-telephone text-teal"></i>
+                        <div>
+                            <small class="text-muted d-block">Reservations</small>
+                            <span class="text-light">{{ $settings['contact_phone'] ?? '+91 90000 00000' }}</span>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-envelope-open text-teal"></i>
+                        <div>
+                            <small class="text-muted d-block">Email Address</small>
+                            <a href="mailto:{{ $settings['contact_email'] ?? 'reservations@aruvi.test' }}" class="text-light text-decoration-none hover-teal">{{ $settings['contact_email'] ?? 'reservations@aruvi.test' }}</a>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start gap-3">
+                        <i class="bi bi-geo-alt text-teal"></i>
+                        <div>
+                            <small class="text-muted d-block">Location</small>
+                            <span class="text-light">Cliff Road, Beachside Coast, Varkala, Kerala</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <h6 class="footer-title text-white uppercase tracking-wider mb-4">Resort Policies</h6>
+                <ul class="list-unstyled footer-links-list">
+                    <li class="mb-2"><a href="{{ route('policies.show', 'privacy-policy') }}" class="hover-teal"><i class="bi bi-chevron-right small me-1"></i> Privacy Policy</a></li>
+                    <li class="mb-2"><a href="{{ route('policies.show', 'terms-and-conditions') }}" class="hover-teal"><i class="bi bi-chevron-right small me-1"></i> Terms & Conditions</a></li>
+                    <li class="mb-2"><a href="{{ route('policies.show', 'cancellation-policy') }}" class="hover-teal"><i class="bi bi-chevron-right small me-1"></i> Cancellation Policy</a></li>
+                    <li><a href="{{ route('policies.show', 'resort-policies') }}" class="hover-teal"><i class="bi bi-chevron-right small me-1"></i> Resort Policies</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h6 class="footer-title text-white uppercase tracking-wider mb-4">Stay in Touch</h6>
+                <p class="text-muted small mb-3">Subscribe to receive private offers, seasonal menus, and coastal updates.</p>
+                <form action="{{ route('newsletter.subscribe') }}" method="post" class="footer-form-premium">
+                    @csrf
+                    <div class="input-group">
+                        <input class="form-control bg-dark border-secondary text-white" name="email" type="email" placeholder="Email Address" required>
+                        <button class="btn btn-teal px-3"><i class="bi bi-send-fill"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <hr class="border-secondary opacity-25 my-4">
+        
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 footer-bottom">
+            <p class="mb-0 text-muted small text-center">&copy; {{ date('Y') }} Aruvi on the Cliff. Handcrafted for premium hospitality. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
+    const menuToggle = document.getElementById('nav');
+    if (menuToggle) {
+        const bsCollapse = new bootstrap.Collapse(menuToggle, {toggle:false});
+        navLinks.forEach((l) => {
+            l.addEventListener('click', () => {
+                if (window.innerWidth < 992) {
+                    bsCollapse.hide();
+                }
+            });
+        });
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<?php
+
+use App\Http\Controllers\Admin\BookingManagementController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PolicyPageController;
+use App\Http\Controllers\Admin\ResourceController;
+use App\Http\Controllers\Admin\ThemeCustomizationController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\FrontendController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [FrontendController::class, 'home'])->name('home');
+Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
+Route::get('/about-us', fn () => redirect()->to('/#about'))->name('about');
+Route::get('/resort-overview-amenities', fn () => redirect()->to('/#amenities'))->name('amenities');
+Route::get('/rooms-suites', fn () => redirect()->to('/#rooms'))->name('rooms.index');
+Route::get('/rooms-suites/{room:slug}', [FrontendController::class, 'room'])->name('rooms.show');
+Route::get('/restaurant-menu', fn () => redirect()->to('/#dining'))->name('restaurant');
+Route::get('/gallery', fn () => redirect()->to('/#gallery'))->name('gallery');
+Route::get('/location-nearby-attractions', fn () => redirect()->to('/#contact'))->name('location');
+Route::get('/reviews-feedback', fn () => redirect()->to('/#reviews'))->name('reviews');
+Route::post('/reviews-feedback', [FrontendController::class, 'storeReview'])->name('reviews.store');
+Route::get('/contact-us', fn () => redirect()->to('/#contact'))->name('contact');
+Route::post('/contact-us', [FrontendController::class, 'storeContact'])->name('contact.store');
+Route::get('/faq', fn () => redirect()->to('/#faq'))->name('faq');
+Route::post('/newsletter', [FrontendController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::get('/policies/{slug}', [FrontendController::class, 'policy'])->name('policies.show');
+
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+
+Route::get('/booking/availability', [BookingController::class, 'availability'])->name('booking.availability');
+Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
+Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+Route::get('/booking-confirmation/{bookingNumber}', [BookingController::class, 'show'])->name('booking.confirmation');
+Route::get('/booking-confirmation/{bookingNumber}/invoice', [BookingController::class, 'invoice'])->name('booking.invoice');
+
+Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.store');
+});
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/bookings', [BookingManagementController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/create', [BookingManagementController::class, 'create'])->name('bookings.create');
+    Route::post('/bookings', [BookingManagementController::class, 'store'])->name('bookings.store');
+    Route::get('/bookings/{booking}/edit', [BookingManagementController::class, 'edit'])->name('bookings.edit');
+    Route::patch('/bookings/{booking}', [BookingManagementController::class, 'update'])->name('bookings.update');
+    Route::delete('/bookings/{booking}', [BookingManagementController::class, 'destroy'])->name('bookings.destroy');
+    Route::get('/theme-customization', [ThemeCustomizationController::class, 'show'])->name('theme.customization');
+    Route::post('/theme-customization', [ThemeCustomizationController::class, 'store'])->name('theme.customization.store');
+    Route::get('/policies', [PolicyPageController::class, 'index'])->name('policies.index');
+    Route::get('/policies/create/{slug}', [PolicyPageController::class, 'create'])->name('policies.create');
+    Route::post('/policies', [PolicyPageController::class, 'store'])->name('policies.store');
+    Route::get('/policies/{page}/edit', [PolicyPageController::class, 'edit'])->name('policies.edit');
+    Route::patch('/policies/{page}', [PolicyPageController::class, 'update'])->name('policies.update');
+    Route::delete('/policies/{page}', [PolicyPageController::class, 'destroy'])->name('policies.destroy');
+    Route::get('/messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('messages.index');
+    Route::get('/messages/{message}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])->name('messages.show');
+    Route::patch('/messages/{message}/read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markAsRead'])->name('messages.read');
+    Route::delete('/messages/{message}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('messages.destroy');
+    Route::get('/{resource}', [ResourceController::class, 'index'])->name('resources.index');
+    Route::get('/{resource}/create', [ResourceController::class, 'create'])->name('resources.create');
+    Route::post('/{resource}', [ResourceController::class, 'store'])->name('resources.store');
+    Route::get('/{resource}/{id}/edit', [ResourceController::class, 'edit'])->name('resources.edit');
+    Route::patch('/{resource}/{id}', [ResourceController::class, 'update'])->name('resources.update');
+    Route::delete('/{resource}/{id}', [ResourceController::class, 'destroy'])->name('resources.destroy');
+});
