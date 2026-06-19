@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="{{ asset('css/resort.css') }}" rel="stylesheet">
 </head>
-<body data-bs-spy="scroll" data-bs-target="#nav" data-bs-offset="90">
+<body>
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand brand-mark d-flex align-items-center gap-2" href="{{ route('home') }}#home">
@@ -158,6 +158,58 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    const sectionLinks = Array.from(navLinks).filter((link) => {
+        const hash = new URL(link.href, window.location.href).hash;
+        return hash && document.querySelector(hash);
+    });
+
+    const setActiveNavLink = (activeId) => {
+        sectionLinks.forEach((link) => {
+            const linkHash = new URL(link.href, window.location.href).hash;
+            const isActive = activeId && linkHash === `#${activeId}`;
+            link.classList.toggle('active', isActive);
+            if (isActive) {
+                link.setAttribute('aria-current', 'page');
+            } else {
+                link.removeAttribute('aria-current');
+            }
+        });
+    };
+
+    const updateActiveSection = () => {
+        if (!sectionLinks.length) {
+            return;
+        }
+
+        const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 0;
+        const probeLine = navbarHeight + Math.round(window.innerHeight * 0.28);
+        let activeSection = null;
+
+        sectionLinks.forEach((link) => {
+            const hash = new URL(link.href, window.location.href).hash;
+            const section = document.querySelector(hash);
+            const rect = section.getBoundingClientRect();
+
+            if (rect.top <= probeLine && rect.bottom > probeLine) {
+                activeSection = section;
+            }
+        });
+
+        if (!activeSection) {
+            const visibleSections = sectionLinks
+                .map((link) => document.querySelector(new URL(link.href, window.location.href).hash))
+                .filter((section) => section.getBoundingClientRect().top <= probeLine);
+
+            activeSection = visibleSections.length ? visibleSections[visibleSections.length - 1] : null;
+        }
+
+        setActiveNavLink(activeSection ? activeSection.id : null);
+    };
+
+    updateActiveSection();
+    window.addEventListener('scroll', updateActiveSection, { passive: true });
+    window.addEventListener('resize', updateActiveSection);
 });
 </script>
 </body>
