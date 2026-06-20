@@ -13,7 +13,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // On Vercel the filesystem is read-only except /tmp.
+        // The api/index.php entry point already calls $app->useStoragePath('/tmp/storage'),
+        // but we also patch the compiled view path here for safety.
+        if (isset($_ENV['VIEW_COMPILED_PATH'])) {
+            $this->app['config']->set(
+                'view.compiled',
+                $_ENV['VIEW_COMPILED_PATH']
+            );
+        }
     }
 
     /**
