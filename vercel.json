@@ -35,14 +35,14 @@
     "env": {
         "APP_NAME": "Aruvi on the Cliff",
         "APP_ENV": "production",
-                "APP_DEBUG": "false",
-                "LOG_CHANNEL": "stderr",
+        "APP_DEBUG": "false",
+        "LOG_CHANNEL": "stderr",
         "CACHE_STORE": "array",
         "SESSION_DRIVER": "cookie",
         "QUEUE_CONNECTION": "sync",
         "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
         "APP_STORAGE_PATH": "/tmp/storage",
         "DB_CONNECTION": "mysql",
-                                                "MYSQL_ATTR_SSL_CA": "/etc/ssl/certs/ca-certificates.crt"
+        "MYSQL_ATTR_SSL_CA": "/etc/ssl/certs/ca-certificates.crt"
     }
 }
