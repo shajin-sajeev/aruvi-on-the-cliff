@@ -2,7 +2,6 @@
     "version": 2,
     "framework": null,
     "buildCommand": "sh vercel-build.sh",
-    "installCommand": "composer install --no-dev --optimize-autoloader --no-interaction",
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.2"
