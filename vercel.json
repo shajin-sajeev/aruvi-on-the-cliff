@@ -1,7 +1,7 @@
 {
     "version": 2,
     "framework": null,
-    "buildCommand": "bash vercel-build.sh",
+    "buildCommand": "sh vercel-build.sh",
     "outputDirectory": "public",
     "functions": {
         "api/index.php": {
