@@ -32,6 +32,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 Route::get('/booking/availability', [BookingController::class, 'availability'])->name('booking.availability');
 Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
 Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
+Route::get('/booking/{bookingNumber}/payment', [BookingController::class, 'paymentPage'])->name('payment.show');
+Route::post('/booking/payment/callback', [BookingController::class, 'paymentCallback'])->name('payment.callback');
 Route::get('/booking-confirmation/{bookingNumber}', [BookingController::class, 'show'])->name('booking.confirmation');
 Route::get('/booking-confirmation/{bookingNumber}/invoice', [BookingController::class, 'invoice'])->name('booking.invoice');
 

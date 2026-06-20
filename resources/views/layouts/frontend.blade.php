@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="{{ asset('css/resort.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
 <body>
 <nav class="navbar navbar-expand-lg fixed-top">
@@ -31,6 +32,8 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#amenities">Amenities</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#dining">Dining</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#gallery">Gallery</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#attractions">Attractions</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#reviews">Reviews</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#contact">Contact</a></li>
                 @auth
                     @if(auth()->user()->isAdmin())<li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin</a></li>@endif

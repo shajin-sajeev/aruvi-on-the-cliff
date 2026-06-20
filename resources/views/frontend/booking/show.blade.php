@@ -107,6 +107,37 @@
             @endif
         </div>
 
+        {{-- Payment status alert --}}
+        @php
+            $latestPayment = $booking->payments->sortByDesc('created_at')->first();
+        @endphp
+        @if($latestPayment && $latestPayment->status === 'paid')
+            <div class="alert alert-success d-flex align-items-center gap-2 rounded-3 mb-4" role="alert">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <div><strong>Payment Confirmed!</strong> ₹{{ number_format($latestPayment->amount, 2) }} received via {{ ucfirst($latestPayment->gateway) }}.</div>
+            </div>
+        @elseif($latestPayment && $latestPayment->status === 'pending' && $booking->status === 'payment_pending')
+            <div class="alert alert-warning d-flex align-items-center gap-2 rounded-3 mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                <div>
+                    <strong>Payment Pending.</strong> Your booking is not confirmed until payment is completed.
+                    <a href="{{ route('payment.show', $booking->booking_number) }}" class="btn btn-warning btn-sm ms-2 fw-bold">
+                        <i class="bi bi-credit-card me-1"></i>Pay Now
+                    </a>
+                </div>
+            </div>
+        @elseif($latestPayment && $latestPayment->status === 'failed')
+            <div class="alert alert-danger d-flex align-items-center gap-2 rounded-3 mb-4" role="alert">
+                <i class="bi bi-x-circle-fill fs-5"></i>
+                <div>
+                    <strong>Payment Failed.</strong> Please retry your payment.
+                    <a href="{{ route('payment.show', $booking->booking_number) }}" class="btn btn-danger btn-sm ms-2 fw-bold">
+                        <i class="bi bi-arrow-repeat me-1"></i>Retry Payment
+                    </a>
+                </div>
+            </div>
+        @endif
+
         <div class="d-flex justify-content-center gap-3">
             <a href="{{ route('home') }}" class="btn btn-outline-teal px-4 py-2"><i class="bi bi-house-door me-2"></i>Return Home</a>
             <button onclick="downloadInvoicePDF()" class="btn btn-teal px-4 py-2 shadow-sm"><i class="bi bi-file-earmark-pdf me-2"></i>Download PDF Report</button>
