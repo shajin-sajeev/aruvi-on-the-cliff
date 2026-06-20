@@ -11,32 +11,28 @@
 // ── Writable paths: redirect to /tmp ─────────────────────────────────────────
 $tmpStorage = '/tmp/storage';
 
-$writableDirs = [
+foreach ([
     $tmpStorage,
-    $tmpStorage . '/framework',
-    $tmpStorage . '/framework/views',
-    $tmpStorage . '/framework/cache',
-    $tmpStorage . '/framework/cache/data',
-    $tmpStorage . '/framework/sessions',
-    $tmpStorage . '/logs',
-    $tmpStorage . '/app',
-    $tmpStorage . '/app/public',
-];
-
-foreach ($writableDirs as $dir) {
+    "$tmpStorage/framework",
+    "$tmpStorage/framework/views",
+    "$tmpStorage/framework/cache",
+    "$tmpStorage/framework/cache/data",
+    "$tmpStorage/framework/sessions",
+    "$tmpStorage/logs",
+    "$tmpStorage/app",
+    "$tmpStorage/app/public",
+] as $dir) {
     if (! is_dir($dir)) {
         mkdir($dir, 0775, true);
     }
 }
 
-// ── Override storage paths before Laravel boots ───────────────────────────────
-// These environment variables are read by Laravel's path helpers.
+// ── Override storage path env before Laravel boots ───────────────────────────
 $_ENV['APP_STORAGE_PATH'] = $tmpStorage;
 
 // ── Bootstrap Laravel ─────────────────────────────────────────────────────────
 define('LARAVEL_START', microtime(true));
 
-// Maintenance mode check (uses the real public path).
 if (file_exists($maintenance = __DIR__ . '/../storage/framework/maintenance.php')) {
     require $maintenance;
 }
@@ -45,36 +41,49 @@ require __DIR__ . '/../vendor/autoload.php';
 
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-// Override storage_path() so compiled views / cache / logs go to /tmp.
+// Redirect storage_path() to /tmp so compiled views/cache/logs are writable.
 $app->useStoragePath($tmpStorage);
 
-// ── Run migrations and seed once per cold start ──────────────────────────────
-// migrate runs every cold start (idempotent — skips already-run migrations).
-// db:seed runs only if the settings table is empty (first deploy).
-$migrationFlag = '/tmp/.migrated';
-if (! file_exists($migrationFlag)) {
+// ── Run migrations once per cold start ───────────────────────────────────────
+// /tmp is wiped between cold starts so this runs at most once per instance.
+// migrate is idempotent — it skips already-applied migrations.
+if (! file_exists('/tmp/.migrated')) {
     try {
         $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
         $kernel->call('migrate', ['--force' => true]);
-        file_put_contents($migrationFlag, date('Y-m-d H:i:s'));
+        file_put_contents('/tmp/.migrated', date('Y-m-d H:i:s'));
     } catch (\Throwable $e) {
-        error_log('Migration failed: ' . $e->getMessage());
+        error_log('[Vercel] Migration failed: ' . $e->getMessage());
     }
 }
 
-// Seed once: check if the settings table has any rows before seeding.
-$seedFlag = '/tmp/.seeded';
-if (! file_exists($seedFlag)) {
+// ── Seed once: only if settings table is empty (first deploy) ────────────────
+if (! file_exists('/tmp/.seeded')) {
     try {
-        $seeded = \Illuminate\Support\Facades\DB::table('settings')->exists();
-        if (! $seeded) {
-            $kernel = $kernel ?? $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        $pdo = new PDO(
+            sprintf(
+                'mysql:host=%s;port=%s;dbname=%s',
+                $_ENV['DB_HOST'] ?? getenv('DB_HOST'),
+                $_ENV['DB_PORT'] ?? getenv('DB_PORT'),
+                $_ENV['DB_DATABASE'] ?? getenv('DB_DATABASE')
+            ),
+            $_ENV['DB_USERNAME'] ?? getenv('DB_USERNAME'),
+            $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD'),
+            [PDO::MYSQL_ATTR_SSL_CA => '/etc/ssl/certs/ca-certificates.crt', PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+        );
+
+        $count = $pdo->query('SELECT COUNT(*) FROM settings')->fetchColumn();
+
+        if ((int) $count === 0) {
+            $kernel ??= $app->make(\Illuminate\Contracts\Console\Kernel::class);
             $kernel->call('db:seed', ['--force' => true]);
         }
-        file_put_contents($seedFlag, date('Y-m-d H:i:s'));
+
+        file_put_contents('/tmp/.seeded', date('Y-m-d H:i:s'));
     } catch (\Throwable $e) {
-        error_log('Seeding failed: ' . $e->getMessage());
+        error_log('[Vercel] Seeding failed: ' . $e->getMessage());
     }
 }
 
+// ── Handle the incoming request ───────────────────────────────────────────────
 $app->handleRequest(\Illuminate\Http\Request::capture());
