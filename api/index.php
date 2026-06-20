@@ -29,6 +29,8 @@ foreach ([
 
 // ── Override storage path env before Laravel boots ───────────────────────────
 $_ENV['APP_STORAGE_PATH'] = $tmpStorage;
+$_SERVER['APP_STORAGE_PATH'] = $tmpStorage;
+putenv("APP_STORAGE_PATH={$tmpStorage}");
 
 // ── Bootstrap Laravel ─────────────────────────────────────────────────────────
 define('LARAVEL_START', microtime(true));

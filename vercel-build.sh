@@ -3,7 +3,11 @@
 set -e
 
 echo "==> Installing npm dependencies and building assets..."
-npm ci
+if [ -f package-lock.json ]; then
+    npm ci
+else
+    npm install
+fi
 npm run build
 
 echo "==> Downloading Composer..."
