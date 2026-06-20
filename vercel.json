@@ -1,7 +1,8 @@
 {
     "version": 2,
     "framework": null,
-    "buildCommand": "npm ci && npm run build && php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\" && php composer-setup.php --quiet && php composer.phar install --no-dev --optimize-autoloader --no-interaction",
+    "buildCommand": "npm ci && npm run build",
+    "installCommand": "php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\" && php composer-setup.php --quiet && php composer.phar install --no-dev --optimize-autoloader --no-interaction",
     "functions": {
         "api/index.php": {
             "runtime": "vercel-php@0.7.2"
