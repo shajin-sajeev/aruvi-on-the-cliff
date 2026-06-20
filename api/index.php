@@ -48,4 +48,33 @@ $app = require_once __DIR__ . '/../bootstrap/app.php';
 // Override storage_path() so compiled views / cache / logs go to /tmp.
 $app->useStoragePath($tmpStorage);
 
+// ── Run migrations and seed once per cold start ──────────────────────────────
+// migrate runs every cold start (idempotent — skips already-run migrations).
+// db:seed runs only if the settings table is empty (first deploy).
+$migrationFlag = '/tmp/.migrated';
+if (! file_exists($migrationFlag)) {
+    try {
+        $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        $kernel->call('migrate', ['--force' => true]);
+        file_put_contents($migrationFlag, date('Y-m-d H:i:s'));
+    } catch (\Throwable $e) {
+        error_log('Migration failed: ' . $e->getMessage());
+    }
+}
+
+// Seed once: check if the settings table has any rows before seeding.
+$seedFlag = '/tmp/.seeded';
+if (! file_exists($seedFlag)) {
+    try {
+        $seeded = \Illuminate\Support\Facades\DB::table('settings')->exists();
+        if (! $seeded) {
+            $kernel = $kernel ?? $app->make(\Illuminate\Contracts\Console\Kernel::class);
+            $kernel->call('db:seed', ['--force' => true]);
+        }
+        file_put_contents($seedFlag, date('Y-m-d H:i:s'));
+    } catch (\Throwable $e) {
+        error_log('Seeding failed: ' . $e->getMessage());
+    }
+}
+
 $app->handleRequest(\Illuminate\Http\Request::capture());
