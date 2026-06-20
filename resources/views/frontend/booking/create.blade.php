@@ -1,5 +1,5 @@
 @extends('layouts.frontend')
-@section('title', 'Online Room Booking - Aruvi on the Cliff')
+@section('title', 'Online Room Bookings - Aruvi on the Cliff')
 
 @push('styles')
 <style>
