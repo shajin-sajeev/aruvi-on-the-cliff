@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --teal: #008C95;
     --teal-hover: #00737b;
     --teal-soft: rgba(0, 140, 149, 0.08);
@@ -917,11 +917,512 @@ body {
     100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
 }
 
-/* Mobile optimization */
-@media (max-width: 991px) {
-    .admin-shell { grid-template-columns: 1fr; }
-    .admin-sidebar { position: static; height: auto; }
-    .hero-slide-bg { height: 60vh; min-height: 400px; }
-    .section { padding: 4.5rem 0; }
+
+/* ================================================================
+   ADMIN MOBILE REDESIGN — Full Responsive System
+   ================================================================ */
+
+/* ── 1. Mobile card-based listing rows ────────────────────────── */
+.admin-record-card {
+    background: #ffffff;
+    border: 1px solid rgba(0,140,149,0.08);
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 8px rgba(7,59,63,0.03);
+    transition: box-shadow 0.2s ease;
+}
+.admin-record-card:last-child { margin-bottom: 0; }
+.admin-record-card:hover { box-shadow: 0 6px 18px rgba(7,59,63,0.07); }
+
+.admin-record-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.6rem;
+}
+.admin-record-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    margin-bottom: 0.75rem;
+}
+.admin-record-card-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: #6b8a8c;
+}
+.admin-record-card-meta-item i { font-size: 0.78rem; color: var(--teal); }
+.admin-record-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 0.65rem;
+    border-top: 1px solid rgba(0,140,149,0.06);
+}
+.admin-record-card-actions .btn {
+    flex: 1;
+    font-size: 0.8rem;
+    padding: 0.45rem 0.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* ── 2. Mobile stat cards ──────────────────────────────────────── */
+.stat-grid-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+@media (min-width: 576px) {
+    .stat-grid-mobile { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 992px) {
+    .stat-grid-mobile { display: none; }
+}
+.stat-card-mobile {
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.stat-card-mobile .sm-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    font-weight: 700;
+}
+.stat-card-mobile .sm-value {
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+.stat-card-mobile .sm-icon {
+    position: absolute;
+    top: 0.7rem;
+    right: 0.9rem;
+    font-size: 1.2rem;
+    opacity: 0.25;
+}
+
+/* ── 3. Delete modal redesign ──────────────────────────────────── */
+.delete-modal-redesign .modal-dialog {
+    margin: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    transform: translateY(100%) !important;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+}
+.delete-modal-redesign.show .modal-dialog {
+    transform: translateY(0) !important;
+}
+.delete-modal-redesign .modal-content {
+    border-radius: 24px 24px 0 0;
+    border: none;
+}
+@media (min-width: 576px) {
+    .delete-modal-redesign .modal-dialog {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        right: auto;
+        max-width: 420px;
+        margin: 1.75rem auto;
+        transform: none !important;
+    }
+    .delete-modal-redesign .modal-content {
+        border-radius: 20px;
+    }
+}
+.delete-sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: #dee2e6;
+    border-radius: 2px;
+    margin: 0 auto 1.25rem;
+    display: block;
+}
+@media (min-width: 576px) {
+    .delete-sheet-handle { display: none; }
+}
+
+/* ── 4. Page header mobile ─────────────────────────────────────── */
+.admin-page-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+@media (min-width: 576px) {
+    .admin-page-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+}
+.admin-page-header h1 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 0.15rem;
+    color: var(--ink);
+}
+@media (min-width: 768px) {
+    .admin-page-header h1 { font-size: 1.6rem; }
+}
+
+/* ── 5. Sidebar Mobile Toggle Button ──────────────────────────── */
+.sidebar-toggle-btn {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--ink);
+    font-size: 1.5rem;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+.sidebar-toggle-btn:hover { background: rgba(0,140,149,0.08); }
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1039;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+.sidebar-overlay.active { display: block; }
+
+/* ── 6. Admin Shell responsive ─────────────────────────────────── */
+@media (max-width: 991.98px) {
+    .admin-shell {
+        grid-template-columns: 1fr;
+    }
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: -285px;
+        width: 272px;
+        height: 100vh;
+        z-index: 1040;
+        transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .admin-sidebar.sidebar-open {
+        left: 0;
+        box-shadow: 6px 0 24px rgba(0,0,0,0.22);
+    }
+    .sidebar-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .admin-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 1030;
+        height: 60px;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    .admin-main {
+        padding: 1.25rem 1rem;
+    }
+    .admin-body-wrapper {
+        width: 100%;
+        min-height: 100vh;
+    }
+}
+@media (max-width: 575.98px) {
+    .admin-main {
+        padding: 1rem 0.75rem;
+    }
+    .admin-topbar {
+        height: 56px;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+}
+
+/* ── 7. Dashboard stats desktop grid ──────────────────────────── */
+@media (max-width: 991.98px) {
+    /* Hide desktop row, show mobile grid */
+    .dash-stats-desktop { display: none !important; }
+    .dash-stats-mobile  { display: block !important; }
+}
+@media (min-width: 992px) {
+    .dash-stats-desktop { display: flex !important; }
+    .dash-stats-mobile  { display: none !important; }
+}
+
+/* ── 8. Dashboard recent bookings — mobile card list ──────────── */
+.booking-mobile-card {
+    background: #fff;
+    border: 1px solid rgba(0,140,149,0.08);
+    border-radius: 14px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 2px 8px rgba(7,59,63,0.03);
+}
+.booking-mobile-card .bmc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+.booking-mobile-card .bmc-row:last-child { margin-bottom: 0; }
+@media (min-width: 768px) {
+    .bookings-mobile-list { display: none; }
+    .bookings-desktop-table { display: block; }
+}
+@media (max-width: 767.98px) {
+    .bookings-mobile-list { display: block; }
+    .bookings-desktop-table { display: none; }
+}
+
+/* ── 9. Listings — mobile card / desktop table toggle ─────────── */
+@media (min-width: 768px) {
+    .listing-mobile-cards { display: none !important; }
+    .listing-desktop-table { display: block !important; }
+}
+@media (max-width: 767.98px) {
+    .listing-mobile-cards { display: block !important; }
+    .listing-desktop-table { display: none !important; }
+}
+
+/* ── 10. Admin topbar responsive ───────────────────────────────── */
+.topbar-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    min-width: 0;
+}
+.topbar-breadcrumb .tb-label { display: none; }
+@media (min-width: 576px) {
+    .topbar-breadcrumb .tb-label { display: inline; }
+}
+.topbar-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+@media (min-width: 576px) { .topbar-title { max-width: 280px; } }
+@media (min-width: 992px) { .topbar-title { max-width: none; } }
+
+/* ── 11. Table card responsive ─────────────────────────────────── */
+.table-card {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 767.98px) {
+    .table-card .table thead th,
+    .table-card .table tbody td {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.82rem;
+        white-space: nowrap;
+    }
+}
+
+/* ── 12. Form card responsive ──────────────────────────────────── */
+@media (max-width: 575.98px) {
+    .form-card-header {
+        padding: 1rem 1.1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .form-card-header .badge {
+        font-size: 0.62rem;
+    }
+    .admin-main .card,
+    .admin-main .lux-card {
+        border-radius: 10px;
+    }
+}
+
+/* ── 13. Customization page ────────────────────────────────────── */
+@media (max-width: 767.98px) {
+    .customization-logo-preview {
+        max-width: 100% !important;
+    }
+}
+
+/* ── 14. Policies page cards ───────────────────────────────────── */
+@media (max-width: 575.98px) {
+    .policy-card-actions {
+        flex-direction: column;
+    }
+    .policy-card-actions .btn {
+        width: 100%;
+    }
+}
+
+/* ── 15. Messages page responsive ─────────────────────────────── */
+@media (max-width: 1199.98px) {
+    .messages-layout .col-xl-4 { margin-bottom: 1rem; }
+}
+
+/* ================================================================
+   FRONTEND RESPONSIVE STYLES
+   ================================================================ */
+
+/* ── Navbar ──────────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+    .navbar { padding: 0.6rem 0; }
+    .navbar-collapse {
+        background: rgba(255,255,255,0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(0,140,149,0.08);
+        padding: 1rem 0.5rem 1.25rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 8px 24px rgba(7,59,63,0.06);
+    }
+    .navbar-nav .nav-link { padding: 0.65rem 1rem !important; }
+    .navbar-nav .nav-link::after { display: none; }
+    .navbar-nav .btn-teal {
+        margin-top: 0.5rem;
+        width: 100%;
+        text-align: center;
+        display: block;
+    }
+    .brand-logo { height: 30px; }
+}
+
+/* ── Hero ────────────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+    .hero-slide-bg { height: 60vh; min-height: 380px; }
+    .section { padding: 4rem 0; }
     #home { margin-top: 68px; }
+}
+@media (max-width: 767.98px) {
+    #home { margin-top: 62px; }
+    .hero-slide-bg { height: 85vw; min-height: 320px; max-height: 480px; }
+    .hero-title { font-size: clamp(1.8rem, 7vw, 2.8rem); }
+    .hero-copy { font-size: 0.95rem; }
+    .hero-content-wrapper .btn-lg { padding: 0.65rem 1.25rem; font-size: 0.9rem; }
+    .hero-content-wrapper .animate-fade-in-up:last-child {
+        display: flex !important;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    .hero-content-wrapper .me-3 { margin-right: 0 !important; }
+}
+
+/* ── About ───────────────────────────────────────────────────── */
+@media (max-width: 767.98px) {
+    .badge-overlay-about { left: 12px; bottom: -16px; padding: 0.6rem 0.75rem; font-size: 0.85rem; }
+    .badge-overlay-about .fs-4 { font-size: 1.1rem !important; }
+}
+
+/* ── Room carousel ───────────────────────────────────────────── */
+@media (max-width: 767.98px) {
+    #roomImagesCarousel .d-block { height: 240px !important; }
+    .offer-badge { top: 10px; right: 10px; font-size: 0.65rem; padding: 0.45rem 0.7rem; }
+}
+
+/* ── Sections general ────────────────────────────────────────── */
+@media (max-width: 575.98px) {
+    .section { padding: 3rem 0; }
+    .display-5 { font-size: 1.75rem; }
+    .display-6 { font-size: 1.5rem; }
+    .eyebrow-accent { font-size: 0.72rem; }
+    .lux-card { padding: 1rem !important; }
+}
+
+/* ── Dining tabs ─────────────────────────────────────────────── */
+.dining-tabs {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    justify-content: flex-start !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+}
+.dining-tabs::-webkit-scrollbar { display: none; }
+@media (max-width: 767.98px) {
+    .dining-tabs { margin-bottom: 2rem; }
+    .dining-tabs .nav-link { padding: 0.5rem 1rem; font-size: 0.85rem; white-space: nowrap; }
+}
+
+/* ── Gallery ─────────────────────────────────────────────────── */
+@media (max-width: 575.98px) {
+    #gallery-filters {
+        overflow-x: auto;
+        flex-wrap: nowrap !important;
+        justify-content: flex-start !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+    }
+    #gallery-filters::-webkit-scrollbar { display: none; }
+    .filter-btn { white-space: nowrap; padding: 0.4rem 0.9rem; font-size: 0.8rem; }
+    #gallery-grid .col-lg-4, #gallery-grid .col-md-6 { flex: 0 0 100%; max-width: 100%; }
+}
+
+/* ── FAQ ─────────────────────────────────────────────────────── */
+@media (max-width: 991.98px) { .faq-callout { padding: 2rem !important; } }
+@media (max-width: 767.98px) {
+    .accordion-faq .accordion-button { font-size: 0.95rem; padding: 1rem 1.25rem; }
+}
+
+/* ── Footer ──────────────────────────────────────────────────── */
+@media (max-width: 767.98px) {
+    .footer { padding-top: 3rem; padding-bottom: 2rem; }
+    .footer .col-lg-4, .footer .col-md-6 { text-align: center; }
+    .footer .social-row { justify-content: center; }
+    .footer-contact-list .d-flex { justify-content: center; }
+    .footer-links-list { text-align: center; }
+    .footer-form-premium .input-group { max-width: 360px; margin: 0 auto; }
+}
+@media (max-width: 575.98px) { .footer-bottom { text-align: center; } }
+
+/* ── Invoice / Booking ───────────────────────────────────────── */
+@media (max-width: 767.98px) {
+    .invoice-container { padding: 1.25rem !important; border-radius: 8px; }
+    .invoice-header-brand { font-size: 1.3rem; }
+    .invoice-title { font-size: 1.1rem; }
+    #invoice-report { padding: 1.25rem !important; }
+    #invoice-report .border.rounded-3 { overflow-x: auto; }
+    .contact-map-embed, iframe[src*="maps"] { height: 250px !important; }
+}
+@media (max-width: 575.98px) {
+    .section.section-soft[style*="padding-top:100px"] { padding-top: 80px !important; }
+    .booking-history-table { overflow-x: auto; }
+}
+
+/* ── Payment page ────────────────────────────────────────────── */
+@media (max-width: 767.98px) {
+    .pay-hero { padding: 80px 0 30px; min-height: 180px; }
+    .pay-hero .display-5 { font-size: 1.6rem; }
+    .pay-card-header { padding: 20px; }
+    .razorpay-btn { padding: 14px 24px; font-size: 1rem; }
+}
+
+/* ── Utilities ───────────────────────────────────────────────── */
+img { max-width: 100%; height: auto; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── Print ───────────────────────────────────────────────────── */
+@media print {
+    .admin-sidebar, .admin-topbar, .navbar, .footer { display: none !important; }
+    .admin-shell { display: block; }
+    .admin-main { padding: 0; }
 }

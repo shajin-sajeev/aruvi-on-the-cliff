@@ -92,20 +92,28 @@
     </aside>
     
     <div class="admin-body-wrapper">
-        <header class="admin-topbar d-flex justify-content-between align-items-center bg-white px-4 py-3 shadow-sm border-bottom">
-            <div class="d-flex align-items-center gap-2">
-                <span class="text-muted small">Resort Admin Panel</span>
-                <span class="text-secondary small">/</span>
-                <strong class="text-teal small">@yield('title', 'Control Center')</strong>
+        <header class="admin-topbar d-flex justify-content-between align-items-center bg-white px-3 px-md-4 shadow-sm border-bottom">
+            <div class="d-flex align-items-center gap-2 min-w-0">
+                <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Toggle sidebar" aria-expanded="false">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="topbar-breadcrumb">
+                    <span class="text-muted tb-label">Admin</span>
+                    <i class="bi bi-chevron-right text-muted tb-label" style="font-size:0.65rem;"></i>
+                    <strong class="text-teal topbar-title small">@yield('title', 'Control Center')</strong>
+                </div>
             </div>
-            <div class="d-flex align-items-center gap-3">
-                <a href="{{ route('admin.messages.index') }}" class="btn btn-white btn-sm border position-relative shadow-sm d-flex align-items-center justify-content-center" style="width: 44px; height: 44px; border-radius: 14px;">
+            <div class="d-flex align-items-center gap-2">
+                <a href="{{ route('admin.messages.index') }}" class="btn btn-white btn-sm border position-relative shadow-sm d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border-radius: 12px; flex-shrink:0;">
                     <i class="bi bi-envelope-fill text-teal"></i>
                     @if(($unreadMessageCount ?? 0) > 0)
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white" style="font-size: 0.65rem; min-width: 20px; height: 20px;">{{ $unreadMessageCount }}</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white" style="font-size: 0.6rem; min-width: 18px; height: 18px;">{{ $unreadMessageCount }}</span>
                     @endif
                 </a>
-                <span class="badge bg-teal-soft text-teal font-sans px-3 py-2"><i class="bi bi-person-badge-fill me-1"></i> {{ auth()->user()->name }}</span>
+                <span class="badge bg-teal-soft text-teal font-sans px-2 px-sm-3 py-2 d-flex align-items-center gap-1">
+                    <i class="bi bi-person-badge-fill"></i>
+                    <span class="d-none d-sm-inline">{{ auth()->user()->name }}</span>
+                </span>
             </div>
         </header>
         
@@ -138,22 +146,27 @@
         </main>
     </div>
 </div>
-<!-- Custom Delete Confirmation Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
-        <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden bg-white">
-            <div class="modal-body text-center p-4">
-                <div class="modal-danger-icon">
-                    <i class="bi bi-exclamation-triangle-fill"></i>
+<!-- Delete Confirmation Modal — bottom-sheet on mobile, centered on desktop -->
+<div class="modal fade delete-modal-redesign" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg bg-white overflow-hidden">
+            <div class="modal-body p-4 p-sm-5 text-center">
+                <span class="delete-sheet-handle"></span>
+                <div class="modal-danger-icon mx-auto mb-3">
+                    <i class="bi bi-trash3-fill"></i>
                 </div>
-                <h5 class="fw-bold text-ink mb-2">Are you absolutely sure?</h5>
-                <p class="text-muted small mb-4">This action cannot be undone. The selected record will be permanently deleted from the database.</p>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-light flex-grow-1 py-2 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                <h5 class="fw-bold text-ink mb-2">Delete this record?</h5>
+                <p class="text-muted small mb-4">This action is permanent and cannot be reversed. The selected record will be removed from the database.</p>
+                <div class="d-flex gap-3">
+                    <button type="button" class="btn btn-light flex-grow-1 py-2 fw-semibold rounded-3" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-1"></i>Cancel
+                    </button>
                     <form id="modalDeleteForm" method="post" action="" class="flex-grow-1">
                         @csrf
                         @method('delete')
-                        <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold">Yes, Delete</button>
+                        <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold rounded-3">
+                            <i class="bi bi-trash3-fill me-1"></i>Yes, Delete
+                        </button>
                     </form>
                 </div>
             </div>
@@ -161,9 +174,52 @@
     </div>
 </div>
 
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // ── Mobile Sidebar Toggle ──────────────────────────────────────────
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const adminSidebar  = document.querySelector('.admin-sidebar');
+    const overlay       = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        adminSidebar.classList.add('sidebar-open');
+        overlay.classList.add('active');
+        sidebarToggle.setAttribute('aria-expanded', 'true');
+        sidebarToggle.querySelector('i').className = 'bi bi-x-lg';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        adminSidebar.classList.remove('sidebar-open');
+        overlay.classList.remove('active');
+        sidebarToggle.setAttribute('aria-expanded', 'false');
+        sidebarToggle.querySelector('i').className = 'bi bi-list';
+        document.body.style.overflow = '';
+    }
+
+    if (sidebarToggle && adminSidebar && overlay) {
+        sidebarToggle.addEventListener('click', function() {
+            adminSidebar.classList.contains('sidebar-open') ? closeSidebar() : openSidebar();
+        });
+        overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Close sidebar on nav link click (mobile)
+    adminSidebar && adminSidebar.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth < 992) closeSidebar();
+        });
+    });
+
+    // Close on resize to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992) {
+            closeSidebar();
+            document.body.style.overflow = '';
+        }
+    });
     // 1. Delete Confirm Modal Action Handler
     const deleteModal = document.getElementById('deleteConfirmModal');
     if (deleteModal) {

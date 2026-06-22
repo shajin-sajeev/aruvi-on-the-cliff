@@ -163,6 +163,12 @@ class ResourceController extends Controller
                 
                 $fieldRules[] = 'string';
             }
+
+            // Unique rule for section_key in home-sections
+            if ($name === 'section_key' && $request->route('resource') === 'home-sections') {
+                $ignoreId = $item ? $item->id : 'NULL';
+                $fieldRules[] = "unique:home_sections,section_key,{$ignoreId}";
+            }
             
             $rules[$name] = $fieldRules;
         }
