@@ -24,31 +24,19 @@ class FrontendController extends Controller
     public function home()
     {
         return view('frontend.home', [
-            'slides' => HeroSlide::where('is_active', true)->orderBy('sort_order')->get(),
-            'sections' => HomeSection::where('is_active', true)->get()->keyBy('section_key'),
-            'rooms' => Room::with('type', 'amenities', 'images')->where('is_active', true)->where('is_featured', true)->latest()->get(),
-            'amenities' => Amenity::where('is_active', true)->orderByDesc('is_featured')->orderBy('name')->get(),
-            'testimonials' => Testimonial::where('is_active', true)->where('is_featured', true)->take(6)->get(),
-            'menuCategories' => RestaurantCategory::with(['items' => fn ($q) => $q->where('is_available', true)->orderBy('sort_order')])->orderBy('sort_order')->get(),
-            'galleryCategories' => GalleryCategory::with('items')->get(),
-            'attractions' => Attraction::latest()->get(),
-            'reviews' => Review::where('is_approved', true)->latest()->take(6)->get(),
-            'faqs' => Faq::where('is_active', true)->orderBy('category')->orderBy('sort_order')->get()->groupBy('category'),
-            'policies' => CmsPage::whereIn('slug', ['privacy-policy', 'terms-and-conditions', 'cancellation-policy', 'resort-policies'])->where('is_published', true)->get()->keyBy('slug'),
-            'socialLinks' => SocialLink::where('is_active', true)->get(),
-            'settings' => Setting::all()->pluck('value', 'key'),
-        ]);
-    }
-
-    public function about()
-    {
-        return $this->cms('about-us', 'frontend.page', ['fallbackTitle' => 'About Aruvi on the Cliff']);
-    }
-
-    public function amenities()
-    {
-        return view('frontend.amenities', [
-            'amenities' => Amenity::where('is_active', true)->orderBy('name')->get(),
+            'slides'           => HeroSlide::where('is_active', true)->orderBy('sort_order')->get(),
+            'sections'         => HomeSection::where('is_active', true)->get()->keyBy('section_key'),
+            'rooms'            => Room::with('type', 'amenities', 'images')->where('is_active', true)->where('is_featured', true)->latest()->get(),
+            'amenities'        => Amenity::where('is_active', true)->orderByDesc('is_featured')->orderBy('name')->get(),
+            'testimonials'     => Testimonial::where('is_active', true)->where('is_featured', true)->take(6)->get(),
+            'menuCategories'   => RestaurantCategory::with(['items' => fn ($q) => $q->where('is_available', true)->orderBy('sort_order')])->orderBy('sort_order')->get(),
+            'galleryCategories'=> GalleryCategory::with('items')->get(),
+            'attractions'      => Attraction::latest()->get(),
+            'reviews'          => Review::where('is_approved', true)->latest()->take(6)->get(),
+            'faqs'             => Faq::where('is_active', true)->orderBy('category')->orderBy('sort_order')->get()->groupBy('category'),
+            'policies'         => CmsPage::whereIn('slug', ['privacy-policy', 'terms-and-conditions', 'cancellation-policy', 'resort-policies'])->where('is_published', true)->get()->keyBy('slug'),
+            'socialLinks'      => SocialLink::where('is_active', true)->get(),
+            'settings'         => Setting::all()->pluck('value', 'key'),
         ]);
     }
 
@@ -64,8 +52,20 @@ class FrontendController extends Controller
         abort_unless($room->is_active, 404);
 
         return view('frontend.rooms.show', [
-            'room' => $room->load('type', 'images', 'amenities'),
+            'room'         => $room->load('type', 'images', 'amenities'),
             'relatedRooms' => Room::where('is_active', true)->whereKeyNot($room->id)->take(3)->get(),
+        ]);
+    }
+
+    public function about()
+    {
+        return $this->cms('about-us', 'frontend.page', ['fallbackTitle' => 'About Aruvi on the Cliff']);
+    }
+
+    public function amenities()
+    {
+        return view('frontend.amenities', [
+            'amenities' => Amenity::where('is_active', true)->orderBy('name')->get(),
         ]);
     }
 

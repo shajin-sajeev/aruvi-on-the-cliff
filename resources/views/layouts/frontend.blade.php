@@ -38,7 +38,6 @@
                 @auth
                     @if(auth()->user()->isAdmin())<li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin</a></li>@endif
                 @endauth
-                <li class="nav-item"><a class="btn btn-teal ms-lg-2" href="{{ route('booking.create') }}">Book Now</a></li>
             </ul>
         </div>
     </div>

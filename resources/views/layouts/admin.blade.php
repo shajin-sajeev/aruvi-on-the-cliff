@@ -26,9 +26,6 @@
             <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-graph-up-arrow me-2"></i> Dashboard Analytics
             </a>
-            <a href="{{ route('admin.bookings.index') }}" class="{{ request()->routeIs('admin.bookings.index') ? 'active' : '' }}">
-                <i class="bi bi-calendar2-range me-2"></i> Bookings Management
-            </a>
             <a href="{{ route('admin.theme.customization') }}" class="{{ request()->routeIs('admin.theme.customization') ? 'active' : '' }}">
                 <i class="bi bi-palette-fill me-2"></i> Theme Customization
             </a>
@@ -36,31 +33,31 @@
             @php
                 $sidebarGroups = [
                     'Website & Branding' => [
-                        'hero-slides' => ['icon' => 'bi-images', 'title' => 'Hero Slider'],
+                        'hero-slides'   => ['icon' => 'bi-images',     'title' => 'Hero Slider'],
                         'home-sections' => ['icon' => 'bi-house-gear', 'title' => 'Homepage Layout'],
-                        'social-links' => ['icon' => 'bi-share', 'title' => 'Social Links'],
+                        'social-links'  => ['icon' => 'bi-share',      'title' => 'Social Links'],
                     ],
                     'Accommodations' => [
                         'room-types' => ['icon' => 'bi-layout-text-window', 'title' => 'Room Types'],
-                        'rooms' => ['icon' => 'bi-door-open', 'title' => 'Rooms & Suites'],
-                        'amenities' => ['icon' => 'bi-stars', 'title' => 'Amenities'],
+                        'rooms'      => ['icon' => 'bi-door-open',          'title' => 'Rooms & Suites'],
+                        'amenities'  => ['icon' => 'bi-stars',              'title' => 'Amenities'],
                     ],
                     'Dining Menu' => [
-                        'restaurant-categories' => ['icon' => 'bi-tags', 'title' => 'Menu Categories'],
-                        'restaurant-items' => ['icon' => 'bi-egg-fried', 'title' => 'Menu Items'],
+                        'restaurant-categories' => ['icon' => 'bi-tags',      'title' => 'Menu Categories'],
+                        'restaurant-items'      => ['icon' => 'bi-egg-fried', 'title' => 'Menu Items'],
                     ],
                     'Resort Media & Guide' => [
-                        'gallery-categories' => ['icon' => 'bi-folder', 'title' => 'Gallery Categories'],
-                        'gallery-items' => ['icon' => 'bi-image', 'title' => 'Gallery Items'],
-                        'attractions' => ['icon' => 'bi-compass', 'title' => 'Local Attractions'],
+                        'gallery-categories' => ['icon' => 'bi-folder',  'title' => 'Gallery Categories'],
+                        'gallery-items'      => ['icon' => 'bi-image',   'title' => 'Gallery Items'],
+                        'attractions'        => ['icon' => 'bi-compass', 'title' => 'Local Attractions'],
                     ],
                     'Guest Book & Pages' => [
-                        'reviews' => ['icon' => 'bi-chat-left-heart', 'title' => 'Reviews / Feedback'],
-                        'contact-messages' => ['icon' => 'bi-envelope', 'title' => 'Message Inbox', 'route' => route('admin.messages.index')],
-                        'policies' => ['icon' => 'bi-file-earmark-text', 'title' => 'Website Policies', 'route' => route('admin.policies.index')],
-                        'faqs' => ['icon' => 'bi-question-circle', 'title' => 'FAQs Management'],
-                        'cms-pages' => ['icon' => 'bi-file-earmark-richtext', 'title' => 'CMS Pages'],
-                    ]
+                        'reviews'          => ['icon' => 'bi-chat-left-heart',       'title' => 'Reviews / Feedback'],
+                        'contact-messages' => ['icon' => 'bi-envelope',              'title' => 'Message Inbox',     'route' => route('admin.messages.index')],
+                        'policies'         => ['icon' => 'bi-file-earmark-text',     'title' => 'Website Policies',  'route' => route('admin.policies.index')],
+                        'faqs'             => ['icon' => 'bi-question-circle',       'title' => 'FAQs Management'],
+                        'cms-pages'        => ['icon' => 'bi-file-earmark-richtext', 'title' => 'CMS Pages'],
+                    ],
                 ];
             @endphp
 

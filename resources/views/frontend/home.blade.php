@@ -20,8 +20,8 @@
                                 <h1 class="hero-title font-serif animate-fade-in-up delay-1">{{ $slide->title }}</h1>
                                 <p class="hero-copy my-4 lead text-light-muted animate-fade-in-up delay-2">{{ $slide->subtitle }}</p>
                                 <div class="animate-fade-in-up delay-3">
-                                    <a class="btn btn-teal btn-lg px-4 py-3 shadow-lg me-3 transition-transform" href="{{ $slide->button_url ?: route('booking.create') }}">
-                                        <i class="bi bi-calendar-check me-2"></i>{{ $slide->button_label ?: 'Book Stay' }}
+                                    <a class="btn btn-teal btn-lg px-4 py-3 shadow-lg me-3 transition-transform" href="{{ $slide->button_url ?: '#contact' }}">
+                                        <i class="bi bi-calendar-check me-2"></i>{{ $slide->button_label ?: 'Explore Resort' }}
                                     </a>
                                     <a class="btn btn-outline-light btn-lg px-4 py-3 transition-transform" href="#about">
                                         Explore Resort
@@ -39,7 +39,7 @@
                     <div class="container text-start">
                         <h1 class="hero-title font-serif">Aruvi on the Cliff</h1>
                         <p class="hero-copy my-4 lead text-light-muted">Luxury rooms above a luminous shoreline.</p>
-                        <a class="btn btn-teal btn-lg px-4 py-3" href="{{ route('booking.create') }}">Reserve Your Stay</a>
+                        <a class="btn btn-teal btn-lg px-4 py-3" href="#contact">Contact Us</a>
                     </div>
                 </div>
             </div>
@@ -254,8 +254,9 @@
                             </div>
                             
                             <div class="d-flex gap-3">
-                                <a class="btn btn-outline-teal px-4 py-2" href="{{ route('rooms.show', $room) }}">View Details</a>
-                                <a class="btn btn-teal px-5 py-2 fw-semibold" href="{{ route('booking.create') }}?room={{ $room->id }}">Book Cottage</a>
+                                <a class="btn btn-teal px-5 py-2 fw-semibold" href="{{ route('rooms.show', $room) }}">
+                                    <i class="bi bi-eye me-2"></i>View Details
+                                </a>
                             </div>
                         </div>
                     </div>

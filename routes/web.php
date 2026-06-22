@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Controllers\Admin\BookingManagementController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PolicyPageController;
 use App\Http\Controllers\Admin\ResourceController;
 use App\Http\Controllers\Admin\ThemeCustomizationController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\BookingController;
 use App\Http\Controllers\FrontendController;
 use Illuminate\Support\Facades\Route;
 
@@ -14,7 +12,7 @@ Route::get('/', [FrontendController::class, 'home'])->name('home');
 Route::get('/login', fn () => redirect()->route('admin.login'))->name('login');
 Route::get('/about-us', fn () => redirect()->to('/#about'))->name('about');
 Route::get('/resort-overview-amenities', fn () => redirect()->to('/#amenities'))->name('amenities');
-Route::get('/rooms-suites', fn () => redirect()->to('/#rooms'))->name('rooms.index');
+Route::get('/rooms-suites', [FrontendController::class, 'rooms'])->name('rooms.index');
 Route::get('/rooms-suites/{room:slug}', [FrontendController::class, 'room'])->name('rooms.show');
 Route::get('/restaurant-menu', fn () => redirect()->to('/#dining'))->name('restaurant');
 Route::get('/gallery', fn () => redirect()->to('/#gallery'))->name('gallery');
@@ -29,14 +27,6 @@ Route::get('/policies/{slug}', [FrontendController::class, 'policy'])->name('pol
 
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-Route::get('/booking/availability', [BookingController::class, 'availability'])->name('booking.availability');
-Route::get('/booking', [BookingController::class, 'create'])->name('booking.create');
-Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
-Route::get('/booking/{bookingNumber}/payment', [BookingController::class, 'paymentPage'])->name('payment.show');
-Route::post('/booking/payment/callback', [BookingController::class, 'paymentCallback'])->name('payment.callback');
-Route::get('/booking-confirmation/{bookingNumber}', [BookingController::class, 'show'])->name('booking.confirmation');
-Route::get('/booking-confirmation/{bookingNumber}/invoice', [BookingController::class, 'invoice'])->name('booking.invoice');
-
 Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.store');
@@ -44,12 +34,6 @@ Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
-    Route::get('/bookings', [BookingManagementController::class, 'index'])->name('bookings.index');
-    Route::get('/bookings/create', [BookingManagementController::class, 'create'])->name('bookings.create');
-    Route::post('/bookings', [BookingManagementController::class, 'store'])->name('bookings.store');
-    Route::get('/bookings/{booking}/edit', [BookingManagementController::class, 'edit'])->name('bookings.edit');
-    Route::patch('/bookings/{booking}', [BookingManagementController::class, 'update'])->name('bookings.update');
-    Route::delete('/bookings/{booking}', [BookingManagementController::class, 'destroy'])->name('bookings.destroy');
     Route::get('/theme-customization', [ThemeCustomizationController::class, 'show'])->name('theme.customization');
     Route::post('/theme-customization', [ThemeCustomizationController::class, 'store'])->name('theme.customization.store');
     Route::get('/policies', [PolicyPageController::class, 'index'])->name('policies.index');
