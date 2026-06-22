@@ -19,7 +19,7 @@
         <a class="navbar-brand brand-mark d-flex align-items-center gap-2" href="{{ route('home') }}#home">
             <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}" alt="Aruvi on the Cliff" class="brand-logo">
             @if(isset($settings['site_brand_image']))
-                <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 32px; max-width: 160px; object-fit: contain;">
+                <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 52px; max-width: 220px; object-fit: contain;">
             @else
                 <span>Aruvi on the Cliff</span>
             @endif
@@ -58,10 +58,10 @@
             <div class="col-lg-4 col-md-6">
                 <div class="footer-brand mb-3">
                     <a href="{{ route('home') }}#home" class="d-flex align-items-center gap-3 text-decoration-none">
+                        <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}" alt="Aruvi Logo" class="footer-logo" style="height: 64px; width: auto; {{ (!isset($settings['site_logo']) || str_contains($settings['site_logo'] ?? '', 'logo.svg')) ? 'filter: brightness(0) invert(1);' : '' }}">
                         @if(isset($settings['site_brand_image']))
-                            <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 48px; max-width: 180px; object-fit: contain;">
+                            <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 64px; max-width: 220px; object-fit: contain;">
                         @else
-                            <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}" alt="Aruvi Logo" class="footer-logo" style="height: 48px; {{ !isset($settings['site_logo']) || str_contains($settings['site_logo'], 'logo.svg') ? 'filter: brightness(0) invert(1);' : '' }}">
                             <span class="text-white fs-4 fw-bold font-serif">Aruvi on the Cliff</span>
                         @endif
                     </a>

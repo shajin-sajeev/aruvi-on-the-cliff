@@ -37,18 +37,31 @@ class ThemeCustomizationController extends Controller
             throw $e;
         }
 
-        $keys = ['site_logo', 'admin_logo', 'site_brand_image', 'about_image', 'dining_image'];
+        // Maps each setting key → uploads sub-folder
+        $folderMap = [
+            'site_logo'        => 'branding',
+            'admin_logo'       => 'branding',
+            'site_brand_image' => 'branding',
+            'about_image'      => 'sections',
+            'dining_image'     => 'sections',
+        ];
 
         try {
-            foreach ($keys as $key) {
+            foreach ($folderMap as $key => $folder) {
                 if ($request->hasFile($key)) {
-                    $file = $request->file($key);
+                    $file     = $request->file($key);
                     $filename = time() . '_' . $key . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('uploads'), $filename);
+                    $destDir  = public_path('uploads/' . $folder);
+
+                    if (!is_dir($destDir)) {
+                        mkdir($destDir, 0755, true);
+                    }
+
+                    $file->move($destDir, $filename);
 
                     Setting::updateOrCreate(
                         ['key' => $key],
-                        ['value' => '/uploads/' . $filename, 'group' => 'site', 'type' => 'file']
+                        ['value' => '/uploads/' . $folder . '/' . $filename, 'group' => 'site', 'type' => 'file']
                     );
                 }
             }

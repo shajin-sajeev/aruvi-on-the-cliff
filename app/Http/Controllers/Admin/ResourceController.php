@@ -38,10 +38,16 @@ class ResourceController extends Controller
     {
         $config = $this->config($resource);
 
+        $items = $config['model']::latest()->paginate(15);
+
+        // Hero slides: pass current count so the view can show a limit warning
+        $heroSlideCount = $resource === 'hero-slides' ? \App\Models\HeroSlide::count() : null;
+
         return view('admin.resources.index', [
-            'resource' => $resource,
-            'config' => $config,
-            'items' => $config['model']::latest()->paginate(15),
+            'resource'       => $resource,
+            'config'         => $config,
+            'items'          => $items,
+            'heroSlideCount' => $heroSlideCount,
         ]);
     }
 
@@ -49,18 +55,39 @@ class ResourceController extends Controller
     {
         $config = $this->config($resource);
         $relations = $this->getRelations($config);
-        
+
+        // Hero slides: enforce max 5 limit
+        if ($resource === 'hero-slides' && \App\Models\HeroSlide::count() >= 5) {
+            return redirect()->route('admin.resources.index', $resource)
+                ->with('error', 'Maximum of 5 hero slides allowed. Delete an existing slide before adding a new one.');
+        }
+
+        // Hero slides: collect already-used button_urls so the form can disable them
+        $usedSlideUrls = $resource === 'hero-slides'
+            ? \App\Models\HeroSlide::whereNotNull('button_url')->pluck('button_url')->filter()->values()->toArray()
+            : [];
+
         return view('admin.resources.form', [
-            'resource' => $resource,
-            'config' => $config,
-            'item' => null,
-            'relations' => $relations
+            'resource'      => $resource,
+            'config'        => $config,
+            'item'          => null,
+            'relations'     => $relations,
+            'usedSlideUrls' => $usedSlideUrls,
         ]);
     }
 
     public function store(Request $request, string $resource)
     {
         $config = $this->config($resource);
+
+        // Hero slides: enforce max 5 limit on store too
+        if ($resource === 'hero-slides' && \App\Models\HeroSlide::count() >= 5) {
+            if ($request->ajax()) {
+                return response()->json(['message' => 'Maximum of 5 hero slides allowed.'], 422);
+            }
+            return redirect()->route('admin.resources.index', $resource)
+                ->with('error', 'Maximum of 5 hero slides allowed.');
+        }
 
         try {
             $this->validateResource($request, $config);
@@ -85,11 +112,21 @@ class ResourceController extends Controller
         $config = $this->config($resource);
         $relations = $this->getRelations($config);
 
+        $item = $config['model']::findOrFail($id);
+
+        // Hero slides: collect already-used button_urls excluding the current item's own url
+        $usedSlideUrls = $resource === 'hero-slides'
+            ? \App\Models\HeroSlide::whereNotNull('button_url')
+                ->where('id', '!=', $id)
+                ->pluck('button_url')->filter()->values()->toArray()
+            : [];
+
         return view('admin.resources.form', [
-            'resource' => $resource,
-            'config' => $config,
-            'item' => $config['model']::findOrFail($id),
-            'relations' => $relations
+            'resource'      => $resource,
+            'config'        => $config,
+            'item'          => $item,
+            'relations'     => $relations,
+            'usedSlideUrls' => $usedSlideUrls,
         ]);
     }
 
@@ -206,6 +243,20 @@ class ResourceController extends Controller
         return self::RESOURCES[$resource];
     }
 
+    /**
+     * Maps resource slug → upload sub-folder under public/uploads/
+     */
+    private const UPLOAD_FOLDERS = [
+        'hero-slides'        => 'hero_slider',
+        'room-types'         => 'rooms',
+        'rooms'              => 'rooms',
+        'amenities'          => 'amenities',
+        'restaurant-items'   => 'restaurant',
+        'gallery-items'      => 'gallery',
+        'attractions'        => 'attractions',
+        'testimonials'       => 'testimonials',
+    ];
+
     private function payload(Request $request, array $config, $item = null): array
     {
         $payload = [];
@@ -214,10 +265,20 @@ class ResourceController extends Controller
             [$name, $type] = array_pad(explode(':', $field, 2), 2, 'text');
             if ($type === 'file') {
                 if ($request->hasFile($name)) {
-                    $file = $request->file($name);
-                    $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('uploads'), $filename);
-                    $payload[$name] = '/uploads/' . $filename;
+                    $file       = $request->file($name);
+                    $filename   = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                    $resource   = $request->route('resource') ?? '';
+                    $folder     = self::UPLOAD_FOLDERS[$resource] ?? 'uploads';
+                    $destDir    = $folder === 'uploads'
+                        ? public_path('uploads')
+                        : public_path('uploads/' . $folder);
+
+                    if (!is_dir($destDir)) {
+                        mkdir($destDir, 0755, true);
+                    }
+
+                    $file->move($destDir, $filename);
+                    $payload[$name] = ($folder === 'uploads' ? '/uploads/' : '/uploads/' . $folder . '/') . $filename;
                 } else {
                     // Do not overwrite existing value if updating
                     if (!$item) {
@@ -235,10 +296,16 @@ class ResourceController extends Controller
         // Special handling for settings resource value (site logo file upload)
         if ($request->route('resource') === 'settings' && $item && $item->type === 'file') {
             if ($request->hasFile('value')) {
-                $file = $request->file('value');
+                $file     = $request->file('value');
                 $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('uploads'), $filename);
-                $payload['value'] = '/uploads/' . $filename;
+                $destDir  = public_path('uploads/branding');
+
+                if (!is_dir($destDir)) {
+                    mkdir($destDir, 0755, true);
+                }
+
+                $file->move($destDir, $filename);
+                $payload['value'] = '/uploads/branding/' . $filename;
             } else {
                 unset($payload['value']);
             }

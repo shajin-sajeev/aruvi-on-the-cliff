@@ -70,7 +70,7 @@
                 <div class="card-body p-4">
 
                     {{-- About Image --}}
-                    <div class="mb-4 pb-4 border-bottom border-light">
+                    <div class="mb-0">
                         <label class="form-label fw-bold small text-ink">About Us Section Image</label>
                         <input class="form-control mb-2" type="file" name="about_image" accept="image/*">
                         <img src="{{ $settings['about_image'] ?? 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=600&q=80' }}"
@@ -78,17 +78,6 @@
                              alt="About image"
                              style="max-height:120px;width:auto;object-fit:cover;">
                         <small class="text-muted extra-small mt-1 d-block">Current about section image</small>
-                    </div>
-
-                    {{-- Dining Image --}}
-                    <div>
-                        <label class="form-label fw-bold small text-ink">Dining Section Preview Image</label>
-                        <input class="form-control mb-2" type="file" name="dining_image" accept="image/*">
-                        <img src="{{ $settings['dining_image'] ?? 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80' }}"
-                             class="img-thumbnail rounded-3 d-block"
-                             alt="Dining image"
-                             style="max-height:120px;width:auto;object-fit:cover;">
-                        <small class="text-muted extra-small mt-1 d-block">Current dining section image</small>
                     </div>
                 </div>
             </div>

@@ -21,10 +21,30 @@ $platformIcons = [
     <div>
         <h1>{{ $config['title'] }}</h1>
         <p class="text-muted small mb-0">Manage content entries, view details, and perform record updates.</p>
+        @if($resource === 'hero-slides')
+            <div class="mt-2 d-flex align-items-center gap-2">
+                @php $atLimit = ($heroSlideCount ?? 0) >= 5; @endphp
+                <div class="d-flex gap-1">
+                    @for($s = 1; $s <= 5; $s++)
+                        <span class="rounded-pill d-inline-block" style="width:22px;height:6px;background:{{ $s <= ($heroSlideCount ?? 0) ? '#008C95' : '#dee2e6' }};"></span>
+                    @endfor
+                </div>
+                <span class="small {{ $atLimit ? 'text-danger fw-semibold' : 'text-muted' }}">
+                    {{ $heroSlideCount ?? 0 }}/5 slides used{{ $atLimit ? ' — limit reached' : '' }}
+                </span>
+            </div>
+        @endif
     </div>
-    <a class="btn btn-teal fw-semibold shadow-sm" href="{{ route('admin.resources.create', $resource) }}">
-        <i class="bi bi-plus-lg me-2"></i>Add New Entry
-    </a>
+    @php $canAdd = !($resource === 'hero-slides' && ($heroSlideCount ?? 0) >= 5); @endphp
+    @if($canAdd)
+        <a class="btn btn-teal fw-semibold shadow-sm" href="{{ route('admin.resources.create', $resource) }}">
+            <i class="bi bi-plus-lg me-2"></i>Add New Entry
+        </a>
+    @else
+        <button class="btn btn-secondary fw-semibold shadow-sm" disabled title="Maximum 5 slides reached">
+            <i class="bi bi-slash-circle me-2"></i>Limit Reached
+        </button>
+    @endif
 </div>
 
 {{-- ── Desktop Table ─────────────────────────────────────────── --}}
