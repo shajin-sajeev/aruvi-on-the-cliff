@@ -13,11 +13,11 @@
 </head>
 <body class="bg-admin-light">
 <div class="admin-shell">
-    <aside class="admin-sidebar shadow-lg">
-        <div class="sidebar-header border-bottom border-secondary border-opacity-10 pb-3 mb-3 d-flex align-items-center gap-2">
-            <img src="{{ asset($settings['admin_logo'] ?? 'images/logo.svg') }}" alt="Logo" style="height: 34px; {{ !isset($settings['admin_logo']) || str_contains($settings['admin_logo'], 'logo.svg') ? 'filter: brightness(0) invert(1);' : '' }}">
+    <aside class="admin-sidebar shadow-sm">
+        <div class="sidebar-header border-bottom pb-3 mb-3 d-flex align-items-center gap-2" style="border-color: rgba(0,140,149,0.12) !important;">
+            <img src="{{ asset($settings['admin_logo'] ?? 'images/logo.svg') }}" alt="Logo" style="height: 34px; {{ !isset($settings['admin_logo']) || str_contains($settings['admin_logo'], 'logo.svg') ? 'filter: sepia(1) saturate(5) hue-rotate(148deg) brightness(0.6);' : '' }}">
             <div>
-                <h6 class="text-white font-serif mb-0 fw-bold">Aruvi Administration</h6>
+                <h6 class="text-ink font-serif mb-0 fw-bold" style="font-size:0.92rem;">Aruvi Administration</h6>
                 <small class="text-teal extra-small">Resort Control Panel</small>
             </div>
         </div>
@@ -77,7 +77,7 @@
                 @endforeach
             @endforeach
             
-            <hr class="border-secondary border-opacity-10">
+            <hr class="opacity-25 my-2" style="border-color: rgba(0,140,149,0.2);">
             <a href="{{ route('home') }}" target="_blank">
                 <i class="bi bi-globe2 me-2"></i> View Live Site
             </a>

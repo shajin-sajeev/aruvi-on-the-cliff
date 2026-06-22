@@ -352,8 +352,8 @@
                                      data-image="{{ $item->image ?: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80' }}" 
                                      data-description="{{ $item->description }}" 
                                      data-signature="{{ $item->is_signature ? '1' : '0' }}"
-                                     data-bs-toggle="modal" 
-                                     data-bs-target="#dishDetailModal">
+                                     role="button"
+                                     tabindex="0">
                                     <div class="dish-image-wrapper">
                                         @if($item->is_signature)
                                             <span class="dish-card-badge"><i class="bi bi-bookmark-star-fill me-1"></i>Chef Signature</span>
@@ -641,7 +641,6 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content modal-content-premium bg-white">
             <div class="modal-header border-0 pb-0">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body pt-0">
                 <div class="row g-4">
@@ -673,8 +672,8 @@
                         </div>
                         
                         <div class="d-flex gap-2 mt-3 pt-3 border-top border-light">
-                            <a href="#contact" data-bs-dismiss="modal" class="btn btn-teal px-4 flex-grow-1"><i class="bi bi-telephone-outbound me-2"></i>Order via Front Desk</a>
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                            <a href="#contact" id="dishModalOrderBtn" class="btn btn-teal px-4 flex-grow-1"><i class="bi bi-telephone-outbound me-2"></i>Order via Front Desk</a>
+                            <button type="button" id="dishModalCloseBtn2" data-bs-dismiss="modal" class="btn btn-outline-secondary">Close</button>
                         </div>
                     </div>
                 </div>
@@ -708,35 +707,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Dining Detail Modal populator
-    const dishDetailModal = document.getElementById('dishDetailModal');
-    if (dishDetailModal) {
-        dishDetailModal.addEventListener('show.bs.modal', function(event) {
-            const card = event.relatedTarget;
-            
-            const name = card.getAttribute('data-name');
-            const price = card.getAttribute('data-price');
-            const image = card.getAttribute('data-image');
-            const description = card.getAttribute('data-description');
-            const isSignature = card.getAttribute('data-signature') === '1';
-            
-            document.getElementById('modalDishName').textContent = name;
-            document.getElementById('modalDishPrice').textContent = price;
-            
+    // Dining Detail Modal — populate data when a dish card is clicked
+    document.querySelectorAll('.dish-card').forEach(function(card) {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('a, button')) return;
+
+            document.getElementById('modalDishName').textContent        = card.dataset.name        || '';
+            document.getElementById('modalDishPrice').textContent       = card.dataset.price       || '';
+            document.getElementById('modalDishDescription').textContent = card.dataset.description || '';
+
             const imgEl = document.getElementById('modalDishImage');
-            imgEl.src = image;
-            imgEl.alt = name;
-            
-            document.getElementById('modalDishDescription').textContent = description;
-            
+            imgEl.src = card.dataset.image || '';
+            imgEl.alt = card.dataset.name  || '';
+
             const sigEl = document.getElementById('modalDishSignature');
-            if (isSignature) {
-                sigEl.style.display = 'inline-block';
-            } else {
-                sigEl.style.display = 'none';
-            }
+            sigEl.style.display = card.dataset.signature === '1' ? 'inline-block' : 'none';
+
+            const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('dishDetailModal'));
+            modal.show();
         });
-    }
+
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+        });
+    });
 });
 </script>
 @endsection

@@ -431,7 +431,7 @@ body {
 
 /* Admin Dashboard layout */
 .bg-admin-light {
-    background-color: #f8fafc;
+    background-color: #f0fafa;
 }
 .admin-shell {
     display: grid;
@@ -439,8 +439,8 @@ body {
     min-height: 100vh;
 }
 .admin-sidebar {
-    background-color: #052326;
-    color: #ffffff;
+    background-color: #ffffff;
+    color: var(--ink);
     padding: 1.5rem 1.25rem;
     display: flex;
     flex-direction: column;
@@ -448,6 +448,7 @@ body {
     position: sticky;
     top: 0;
     overflow-y: auto;
+    border-right: 1px solid rgba(0, 140, 149, 0.12);
 }
 .admin-sidebar .sidebar-navigation {
     display: flex;
@@ -455,7 +456,7 @@ body {
     gap: 0.15rem;
 }
 .admin-sidebar a {
-    color: rgba(255, 255, 255, 0.72) !important;
+    color: #4a6a6c !important;
     display: flex;
     align-items: center;
     padding: 0.6rem 0.8rem;
@@ -466,8 +467,8 @@ body {
     transition: all 0.2s ease;
 }
 .admin-sidebar a:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff !important;
+    background: var(--teal-soft);
+    color: var(--teal) !important;
     transform: translateX(2px);
 }
 .admin-sidebar a.active {
@@ -484,11 +485,11 @@ body {
 .admin-topbar {
     height: 70px;
     background-color: #ffffff;
-    border-bottom: 1px solid rgba(0, 140, 149, 0.06);
+    border-bottom: 1px solid rgba(0, 140, 149, 0.1);
 }
 .admin-main {
     padding: 2.25rem;
-    background-color: #f8fafc;
+    background-color: #f0fafa;
 }
 
 /* Dynamic Admin Cards */
@@ -505,12 +506,12 @@ body {
     transform: translateY(-3px);
     box-shadow: 0 10px 24px rgba(0,0,0,0.08) !important;
 }
-.stat-card.card-teal { background: linear-gradient(135deg, #073b3f 0%, var(--teal) 100%); color: #ffffff; }
-.stat-card.card-blue { background: linear-gradient(135deg, #094a50 0%, #157d87 100%); color: #ffffff; }
-.stat-card.card-gold { background: linear-gradient(135deg, #6c4b18 0%, #b38612 100%); color: #ffffff; }
-.stat-card.card-purple { background: linear-gradient(135deg, #124046 0%, #2fbf9f 100%); color: #ffffff; }
-.stat-card.card-orange { background: linear-gradient(135deg, #6b2e1e 0%, #d45c43 100%); color: #ffffff; }
-.stat-card.card-pink { background: linear-gradient(135deg, #0b2224 0%, #1c5257 100%); color: #ffffff; }
+.stat-card.card-teal   { background: linear-gradient(135deg, var(--teal) 0%, #00b3bd 100%); color: #ffffff; }
+.stat-card.card-blue   { background: linear-gradient(135deg, #0083a0 0%, #00afc5 100%); color: #ffffff; }
+.stat-card.card-gold   { background: linear-gradient(135deg, #b38612 0%, #d4a520 100%); color: #ffffff; }
+.stat-card.card-purple { background: linear-gradient(135deg, var(--teal) 0%, #2fbf9f 100%); color: #ffffff; }
+.stat-card.card-orange { background: linear-gradient(135deg, #c96a3a 0%, #e0885a 100%); color: #ffffff; }
+.stat-card.card-pink   { background: linear-gradient(135deg, #008C95 0%, #1aacb5 100%); color: #ffffff; }
 
 .stat-icon-wrapper {
     width: 32px;
@@ -634,19 +635,20 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* Admin Panel Customization & Color Scheme Alignment */
+/* Admin Panel White + Teal Color Scheme */
 .bg-admin-light, .admin-main {
-    background-color: #f2faf8 !important; /* Lighter theme-matching foam background */
+    background-color: #f0fafa !important;
 }
 .admin-sidebar {
-    background-color: #073b3f !important; /* Core brand deep green */
+    background-color: #ffffff !important;
+    border-right: 1px solid rgba(0, 140, 149, 0.12) !important;
 }
 .admin-sidebar .sidebar-navigation a {
-    color: rgba(255, 255, 255, 0.75) !important;
+    color: #4a6a6c !important;
 }
 .admin-sidebar .sidebar-navigation a:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    color: #ffffff !important;
+    background: var(--teal-soft) !important;
+    color: var(--teal) !important;
 }
 .admin-sidebar .sidebar-navigation a.active {
     background: var(--teal) !important;
@@ -667,13 +669,13 @@ body {
     overflow: hidden;
 }
 .table-card .table thead th {
-    background-color: #f7fbfb;
-    color: var(--ink);
+    background-color: rgba(0, 140, 149, 0.06);
+    color: var(--teal);
     font-weight: 700;
     font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid rgba(0, 140, 149, 0.08);
+    border-bottom: 1px solid rgba(0, 140, 149, 0.1);
     padding: 1rem 1.25rem;
 }
 .table-card .table tbody td {
@@ -820,6 +822,8 @@ body {
     overflow: hidden;
     position: relative;
     border-radius: 12px;
+    /* clip the image to rounded corners without affecting the modal close button */
+    isolation: isolate;
 }
 @media (min-width: 768px) {
     .dish-detail-image-wrapper {
@@ -835,11 +839,11 @@ body {
     border: 0;
     border-radius: 18px;
     box-shadow: 0 15px 45px rgba(7, 59, 63, 0.15);
-    overflow: hidden;
 }
 .modal-content-premium .modal-header {
     border-bottom: 0;
-    padding: 1.5rem 1.5rem 0.5rem;
+    padding: 1rem 1.5rem 0.5rem;
+    justify-content: flex-end;
 }
 .modal-content-premium .modal-body {
     padding: 1.5rem;
@@ -888,7 +892,7 @@ body {
 
 /* Premium Form Card Header styling */
 .form-card-header {
-    background: linear-gradient(135deg, #073b3f 0%, #0d5c63 100%);
+    background: linear-gradient(135deg, var(--teal) 0%, #00b3bd 100%);
     color: #ffffff;
     padding: 1.5rem 2rem;
     border-radius: 12px 12px 0 0;
@@ -898,9 +902,9 @@ body {
 }
 /* Badge inside the header must always show dark text on white background */
 .form-card-header .badge {
-    background-color: #ffffff !important;
-    color: #0b2224 !important;
-    border: none !important;
+    background-color: rgba(255,255,255,0.2) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255,255,255,0.35) !important;
 }
 
 /* Warning Delete Modal animation & icons */
@@ -1128,10 +1132,11 @@ body {
         transition: left 0.3s cubic-bezier(0.4,0,0.2,1);
         overflow-y: auto;
         overflow-x: hidden;
+        box-shadow: none;
     }
     .admin-sidebar.sidebar-open {
         left: 0;
-        box-shadow: 6px 0 24px rgba(0,0,0,0.22);
+        box-shadow: 6px 0 24px rgba(0,140,149,0.12);
     }
     .sidebar-toggle-btn {
         display: inline-flex;
