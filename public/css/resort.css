@@ -896,6 +896,12 @@ body {
 .form-card-header h5 {
     margin-bottom: 0.15rem;
 }
+/* Badge inside the header must always show dark text on white background */
+.form-card-header .badge {
+    background-color: #ffffff !important;
+    color: #0b2224 !important;
+    border: none !important;
+}
 
 /* Warning Delete Modal animation & icons */
 .modal-danger-icon {

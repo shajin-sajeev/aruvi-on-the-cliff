@@ -16,7 +16,7 @@
             </h5>
             <small class="text-white opacity-70">Manage the policy content shown on the public website.</small>
         </div>
-        <span class="badge bg-white text-ink border border-white border-opacity-50 px-3 py-2 text-uppercase tracking-wider extra-small fw-bold">
+        <span class="badge px-3 py-2 text-uppercase tracking-wider extra-small fw-bold">
             {{ $page->slug }}
         </span>
     </div>

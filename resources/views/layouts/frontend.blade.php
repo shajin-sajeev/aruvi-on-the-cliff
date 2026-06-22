@@ -69,20 +69,42 @@
                 </div>
                 <p class="text-muted mb-4 lead-sm">An architectural tribute to the beauty of the coast. Experience the tranquil overlap of luxury, sea breeze, and cliffside dining.</p>
                 @isset($socialLinks)
-                    <div class="social-row d-flex gap-3">
+                    <div class="social-row d-flex gap-3 flex-wrap">
                         @foreach($socialLinks as $social)
                             @php
-                                $iconClass = match(strtolower($social->platform)) {
-                                    'instagram' => 'bi-instagram',
-                                    'facebook' => 'bi-facebook',
-                                    'youtube' => 'bi-youtube',
-                                    'twitter', 'x' => 'bi-twitter-x',
-                                    'linkedin' => 'bi-linkedin',
-                                    default => 'bi-link-45deg'
+                                // Determine if icon is an uploaded file path or a plain text value
+                                $iconValue = $social->icon ?? '';
+                                $isFilePath = $iconValue && (
+                                    str_starts_with($iconValue, '/uploads/') ||
+                                    str_starts_with($iconValue, 'uploads/') ||
+                                    str_starts_with($iconValue, '/images/')
+                                );
+                                // Bootstrap icon fallback map
+                                $biClass = match(strtolower($social->platform ?? '')) {
+                                    'instagram'      => 'bi-instagram',
+                                    'facebook'       => 'bi-facebook',
+                                    'youtube'        => 'bi-youtube',
+                                    'twitter', 'x'  => 'bi-twitter-x',
+                                    'linkedin'       => 'bi-linkedin',
+                                    'pinterest'      => 'bi-pinterest',
+                                    'tiktok'         => 'bi-tiktok',
+                                    'whatsapp'       => 'bi-whatsapp',
+                                    default          => 'bi-link-45deg'
                                 };
                             @endphp
-                            <a href="{{ $social->url }}" target="_blank" rel="noopener" aria-label="{{ $social->platform }}" class="social-link-item">
-                                <i class="bi {{ $iconClass }}"></i>
+                            <a href="{{ $social->url }}"
+                               target="_blank"
+                               rel="noopener"
+                               aria-label="{{ $social->platform }}"
+                               class="social-link-item"
+                               title="{{ ucfirst($social->platform) }}">
+                                @if($isFilePath)
+                                    <img src="{{ asset($iconValue) }}"
+                                         alt="{{ $social->platform }}"
+                                         style="width:18px;height:18px;object-fit:contain;filter:brightness(0) invert(1);">
+                                @else
+                                    <i class="bi {{ $biClass }}"></i>
+                                @endif
                             </a>
                         @endforeach
                     </div>

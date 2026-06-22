@@ -27,7 +27,7 @@ class ResourceController extends Controller
         'contact-messages' => ['model' => \App\Models\ContactMessage::class, 'title' => 'Contact Message Management', 'fields' => ['name', 'email', 'phone', 'subject', 'message:textarea', 'status']],
         'faqs' => ['model' => \App\Models\Faq::class, 'title' => 'FAQ Management', 'fields' => ['category', 'question', 'answer:textarea', 'sort_order:number', 'is_active:checkbox']],
         'cms-pages' => ['model' => \App\Models\CmsPage::class, 'title' => 'CMS Page Management', 'fields' => ['title', 'slug', 'content:textarea', 'seo_title', 'seo_description:textarea', 'is_published:checkbox']],
-        'social-links' => ['model' => \App\Models\SocialLink::class, 'title' => 'Social Media Management', 'fields' => ['platform', 'url', 'icon', 'is_active:checkbox']],
+        'social-links' => ['model' => \App\Models\SocialLink::class, 'title' => 'Social Media Management', 'fields' => ['platform', 'url', 'is_active:checkbox']],
         'settings' => ['model' => \App\Models\Setting::class, 'title' => 'Site Settings / SEO Management', 'fields' => ['group', 'key', 'value:textarea', 'type']],
         'users' => ['model' => \App\Models\User::class, 'title' => 'User Management', 'fields' => ['role_id:number', 'name', 'email', 'phone', 'password', 'status']],
         'roles' => ['model' => \App\Models\Role::class, 'title' => 'Role Management', 'fields' => ['name', 'slug', 'is_system:checkbox']],

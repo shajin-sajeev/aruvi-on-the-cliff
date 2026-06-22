@@ -3,20 +3,20 @@
 @section('content')
 
 @php
-// Platform logo URLs for social-links
-$platformLogos = [
-    'facebook'  => 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png',
-    'instagram' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png',
-    'twitter'   => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/600px-Logo_of_Twitter.svg.png',
-    'x'         => 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/X_logo_2023_%28white_background%29.png/600px-X_logo_2023_%28white_background%29.png',
-    'youtube'   => 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/600px-YouTube_full-color_icon_%282017%29.svg.png',
-    'linkedin'  => 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png',
-    'pinterest' => 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Pinterest-logo.png/600px-Pinterest-logo.png',
-    'tiktok'    => 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/600px-TikTok_logo.svg.png',
-    'whatsapp'  => 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/600px-WhatsApp.svg.png',
-];
 $currentPlatform = strtolower(old('platform', $item?->platform ?? ''));
-$platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
+// Platform → Bootstrap icon + brand colour
+$platformMeta = [
+    'facebook'  => ['icon' => 'bi-facebook',  'color' => '#1877f2'],
+    'instagram' => ['icon' => 'bi-instagram', 'color' => '#e1306c'],
+    'twitter'   => ['icon' => 'bi-twitter-x', 'color' => '#000000'],
+    'x'         => ['icon' => 'bi-twitter-x', 'color' => '#000000'],
+    'youtube'   => ['icon' => 'bi-youtube',   'color' => '#ff0000'],
+    'linkedin'  => ['icon' => 'bi-linkedin',  'color' => '#0a66c2'],
+    'pinterest' => ['icon' => 'bi-pinterest', 'color' => '#e60023'],
+    'tiktok'    => ['icon' => 'bi-tiktok',    'color' => '#010101'],
+    'whatsapp'  => ['icon' => 'bi-whatsapp',  'color' => '#25d366'],
+];
+$currentMeta = $platformMeta[$currentPlatform] ?? ['icon' => 'bi-share', 'color' => '#6c757d'];
 @endphp
 
 <div class="mb-3">
@@ -26,7 +26,6 @@ $platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
 </div>
 
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
-    {{-- Card Header --}}
     <div class="form-card-header d-flex align-items-start align-items-sm-center justify-content-between flex-wrap gap-2">
         <div>
             <h5 class="fw-bold font-serif mb-1 text-white">
@@ -35,8 +34,7 @@ $platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
             </h5>
             <small class="text-white opacity-70">All required fields will be validated on save.</small>
         </div>
-        {{-- Fix #3: badge text must be readable — use text-ink on white/light bg --}}
-        <span class="badge bg-white text-ink border border-white border-opacity-50 px-3 py-2 text-uppercase tracking-wider extra-small fw-bold">
+        <span class="badge px-3 py-2 text-uppercase tracking-wider extra-small fw-bold">
             {{ $resource }}
         </span>
     </div>
@@ -52,20 +50,56 @@ $platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
             @foreach($config['fields'] as $field)
                 @php([$name, $type] = array_pad(explode(':', $field, 2), 2, 'text'))
 
-                {{-- Fix #2: skip 'icon' field for social-links entirely (replaced by platform logo preview) --}}
-                @if($resource === 'social-links' && $name === 'icon')
-                    @continue
-                @endif
+                {{-- ── social-links: platform ───────────────────────────── --}}
+                @if($resource === 'social-links' && $name === 'platform')
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label fw-bold small text-ink mb-2">
+                            <i class="bi bi-share text-teal me-1"></i> Platform
+                        </label>
+                        <div class="d-flex align-items-center gap-3">
+                            {{-- live icon preview circle --}}
+                            <div id="platform-icon-box"
+                                 class="d-flex align-items-center justify-content-center flex-shrink-0 rounded-3"
+                                 style="width:52px;height:52px;background:{{ $currentMeta['color'] }};transition:background 0.2s;">
+                                <i id="platform-icon-el"
+                                   class="bi {{ $currentMeta['icon'] }} text-white"
+                                   style="font-size:1.4rem;"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <select class="form-select" name="platform" id="platform-select" required>
+                                    <option value="">Select Platform…</option>
+                                    @foreach(['Facebook','Instagram','Twitter','X','YouTube','LinkedIn','Pinterest','TikTok','WhatsApp'] as $p)
+                                        <option value="{{ strtolower($p) }}"
+                                            @selected($currentPlatform === strtolower($p))>
+                                            {{ $p }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="{{ $type === 'textarea' ? 'col-12' : 'col-12 col-sm-6' }}">
-                    <label class="form-label fw-bold small text-ink mb-2">
-                        @php($fieldIcon = ['file' => 'bi-image', 'number' => 'bi-hash', 'checkbox' => 'bi-toggle-on', 'textarea' => 'bi-text-paragraph'][$type] ?? 'bi-input-cursor-text')
-                        <i class="bi {{ $fieldIcon }} text-teal me-1"></i>
-                        {{ str($name)->headline() }}
-                    </label>
+                {{-- ── home-sections: section_key readonly ──────────────── --}}
+                @elseif($resource === 'home-sections' && $name === 'section_key')
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label fw-bold small text-ink mb-2">
+                            <i class="bi bi-key text-teal me-1"></i> Section Key
+                        </label>
+                        <input class="form-control bg-light text-muted"
+                               type="text" name="section_key"
+                               value="{{ old('section_key', $item?->section_key ?? 'about_preview') }}"
+                               readonly style="cursor:not-allowed;">
+                        <small class="text-muted extra-small d-block mt-1">
+                            <i class="bi bi-lock-fill me-1"></i>Section key is fixed and cannot be changed.
+                        </small>
+                    </div>
 
-                    {{-- Settings file override --}}
-                    @if($resource === 'settings' && $item && $item->type === 'file' && $name === 'value')
+                {{-- ── settings file override ───────────────────────────── --}}
+                @elseif($resource === 'settings' && $item && $item->type === 'file' && $name === 'value')
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label fw-bold small text-ink mb-2">
+                            <i class="bi bi-image text-teal me-1"></i> Value (File)
+                        </label>
                         <input class="form-control" type="file" name="value">
                         @if($item->value)
                             <div class="mt-2 p-2 bg-light rounded-3 d-inline-block">
@@ -73,60 +107,43 @@ $platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
                                 <img src="{{ asset($item->value) }}" alt="Preview" class="img-thumbnail" style="max-height:70px;">
                             </div>
                         @endif
+                    </div>
 
-                    {{-- Fix #1: section_key readonly for home-sections, pre-filled with about_preview --}}
-                    @elseif($resource === 'home-sections' && $name === 'section_key')
-                        <input class="form-control bg-light text-muted"
-                               type="text"
-                               name="section_key"
-                               value="{{ old('section_key', $item?->section_key ?? 'about_preview') }}"
-                               readonly
-                               style="cursor:not-allowed;">
-                        <small class="text-muted extra-small d-block mt-1">
-                            <i class="bi bi-lock-fill me-1"></i>Section key is fixed and cannot be changed.
-                        </small>
-
-                    {{-- Fix #2: platform field for social-links — show logo preview alongside --}}
-                    @elseif($resource === 'social-links' && $name === 'platform')
-                        <div class="d-flex align-items-center gap-3">
-                            <div id="platform-logo-wrap"
-                                 class="border rounded-3 bg-light d-flex align-items-center justify-content-center flex-shrink-0"
-                                 style="width:52px;height:52px;overflow:hidden;transition:all 0.2s;">
-                                @if($platformLogoUrl)
-                                    <img id="platform-logo-img" src="{{ $platformLogoUrl }}"
-                                         alt="{{ $currentPlatform }}"
-                                         style="width:36px;height:36px;object-fit:contain;">
-                                @else
-                                    <i id="platform-logo-placeholder" class="bi bi-share text-teal fs-4"></i>
-                                    <img id="platform-logo-img" src="" alt="" style="width:36px;height:36px;object-fit:contain;display:none;">
-                                @endif
-                            </div>
-                            <div class="flex-grow-1">
-                                <select class="form-select" name="platform" id="platform-select" required>
-                                    <option value="">Select Platform…</option>
-                                    @foreach(['Facebook','Instagram','Twitter','X','YouTube','LinkedIn','Pinterest','TikTok','WhatsApp'] as $p)
-                                        <option value="{{ strtolower($p) }}"
-                                            @selected(strtolower(old('platform', $item?->platform ?? '')) === strtolower($p))>
-                                            {{ $p }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                    @elseif($type === 'textarea')
+                {{-- ── generic textarea ─────────────────────────────────── --}}
+                @elseif($type === 'textarea')
+                    <div class="col-12">
+                        <label class="form-label fw-bold small text-ink mb-2">
+                            <i class="bi bi-text-paragraph text-teal me-1"></i>
+                            {{ str($name)->headline() }}
+                        </label>
                         <textarea class="form-control" rows="5" name="{{ $name }}"
                                   placeholder="Provide {{ str($name)->headline() }} content…">{{ old($name, $item?->{$name}) }}</textarea>
+                    </div>
 
-                    @elseif($type === 'checkbox')
+                {{-- ── generic checkbox ─────────────────────────────────── --}}
+                @elseif($type === 'checkbox')
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label fw-bold small text-ink mb-2">
+                            <i class="bi bi-toggle-on text-teal me-1"></i>
+                            {{ str($name)->headline() }}
+                        </label>
                         <div class="form-check form-switch p-3 border rounded-3 bg-light bg-opacity-50">
-                            <input class="form-check-input ms-0 me-2" type="checkbox" name="{{ $name }}" value="1"
+                            <input class="form-check-input ms-0 me-2" type="checkbox"
+                                   name="{{ $name }}" value="1"
                                    id="switch-{{ $name }}" @checked(old($name, $item?->{$name}))>
-                            <label class="form-check-label text-ink fw-semibold small" for="switch-{{ $name }}">Enabled</label>
+                            <label class="form-check-label text-ink fw-semibold small"
+                                   for="switch-{{ $name }}">Enabled</label>
                             <small class="text-muted d-block extra-small mt-1">Check to make this entry live on the website.</small>
                         </div>
+                    </div>
 
-                    @elseif($type === 'file')
+                {{-- ── generic file upload ──────────────────────────────── --}}
+                @elseif($type === 'file')
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label fw-bold small text-ink mb-2">
+                            <i class="bi bi-image text-teal me-1"></i>
+                            {{ str($name)->headline() }}
+                        </label>
                         <div class="border border-dashed p-3 p-md-4 rounded-3 text-center bg-light bg-opacity-50">
                             <i class="bi bi-cloud-arrow-up text-teal fs-4 d-block mb-2"></i>
                             <input class="form-control" type="file" name="{{ $name }}">
@@ -139,8 +156,15 @@ $platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
                                 </div>
                             @endif
                         </div>
+                    </div>
 
-                    @else
+                {{-- ── generic select / text input ──────────────────────── --}}
+                @else
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label fw-bold small text-ink mb-2">
+                            <i class="bi {{ $type === 'number' ? 'bi-hash' : 'bi-input-cursor-text' }} text-teal me-1"></i>
+                            {{ str($name)->headline() }}
+                        </label>
                         @if(str_ends_with($name, '_id') && isset($relations[$name]))
                             <select class="form-select" name="{{ $name }}">
                                 <option value="">Select {{ str(substr($name,0,-3))->headline() }}…</option>
@@ -154,13 +178,13 @@ $platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
                         @else
                             <input class="form-control"
                                    type="{{ $type === 'number' ? 'number' : 'text' }}"
-                                   step="0.01"
-                                   name="{{ $name }}"
+                                   step="0.01" name="{{ $name }}"
                                    value="{{ old($name,$item?->{$name}) }}"
                                    placeholder="Enter {{ str($name)->headline() }}…">
                         @endif
-                    @endif
-                </div>
+                    </div>
+                @endif
+
             @endforeach
         </div>
 
@@ -178,39 +202,31 @@ $platformLogoUrl = $platformLogos[$currentPlatform] ?? null;
 @if($resource === 'social-links')
 <script>
 (function () {
-    const logos = {
-        facebook:  'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/600px-Facebook_Logo_%282019%29.png',
-        instagram: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png',
-        twitter:   'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/600px-Logo_of_Twitter.svg.png',
-        x:         'https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/X_logo_2023_%28white_background%29.png/600px-X_logo_2023_%28white_background%29.png',
-        youtube:   'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/600px-YouTube_full-color_icon_%282017%29.svg.png',
-        linkedin:  'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/600px-LinkedIn_logo_initials.png',
-        pinterest: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Pinterest-logo.png/600px-Pinterest-logo.png',
-        tiktok:    'https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/600px-TikTok_logo.svg.png',
-        whatsapp:  'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/600px-WhatsApp.svg.png',
+    const meta = {
+        facebook:  { icon: 'bi-facebook',  color: '#1877f2' },
+        instagram: { icon: 'bi-instagram', color: '#e1306c' },
+        twitter:   { icon: 'bi-twitter-x', color: '#000000' },
+        x:         { icon: 'bi-twitter-x', color: '#000000' },
+        youtube:   { icon: 'bi-youtube',   color: '#ff0000' },
+        linkedin:  { icon: 'bi-linkedin',  color: '#0a66c2' },
+        pinterest: { icon: 'bi-pinterest', color: '#e60023' },
+        tiktok:    { icon: 'bi-tiktok',    color: '#010101' },
+        whatsapp:  { icon: 'bi-whatsapp',  color: '#25d366' },
     };
 
-    const select      = document.getElementById('platform-select');
-    const logoImg     = document.getElementById('platform-logo-img');
-    const placeholder = document.getElementById('platform-logo-placeholder');
+    const select  = document.getElementById('platform-select');
+    const iconBox = document.getElementById('platform-icon-box');
+    const iconEl  = document.getElementById('platform-icon-el');
 
-    function updateLogo(val) {
-        const url = logos[val] || null;
-        if (url) {
-            logoImg.src = url;
-            logoImg.alt = val;
-            logoImg.style.display = 'block';
-            if (placeholder) placeholder.style.display = 'none';
-        } else {
-            logoImg.style.display = 'none';
-            if (placeholder) placeholder.style.display = 'block';
-        }
+    function syncPlatform(val) {
+        const m = meta[val] || { icon: 'bi-share', color: '#6c757d' };
+        if (iconBox) iconBox.style.background = m.color;
+        if (iconEl)  iconEl.className = 'bi ' + m.icon + ' text-white';
     }
 
     if (select) {
-        select.addEventListener('change', () => updateLogo(select.value));
-        // Run on page load to restore existing value
-        updateLogo(select.value);
+        select.addEventListener('change', () => syncPlatform(select.value));
+        syncPlatform(select.value);
     }
 })();
 </script>
