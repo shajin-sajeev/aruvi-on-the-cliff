@@ -195,19 +195,6 @@
         .pw-strength-bar { height:3px; border-radius:2px; margin-top:0.35rem; background:#e0eced; overflow:hidden; }
         .pw-strength-bar-fill { height:100%; border-radius:2px; width:0%; transition:width 0.3s,background 0.3s; }
 
-        .secret-hint {
-            background: rgba(0,140,149,0.06);
-            border: 1px solid rgba(0,140,149,0.15);
-            border-radius: 10px;
-            padding: 0.6rem 0.85rem;
-            font-size: 0.78rem;
-            color: #2a6b70;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
         .btn-auth {
             width: 100%;
             padding: 0.78rem;
@@ -268,11 +255,11 @@
             </div>
 
             <h2>Create Your<br>Admin Account</h2>
-            <p>Join the resort management team. You'll need an admin registration key to complete sign-up.</p>
+            <p>Join the resort management team. Your registration will be reviewed and approved by the Super Admin.</p>
             <ol class="auth-steps">
                 <li><span class="step-num">1</span> Fill in your name and contact details</li>
                 <li><span class="step-num">2</span> Set a strong password (min. 8 chars)</li>
-                <li><span class="step-num">3</span> Enter the admin registration key</li>
+                <li><span class="step-num">3</span> Submit — Super Admin reviews &amp; approves</li>
                 <li><span class="step-num">4</span> Access the full resort dashboard</li>
             </ol>
             <div class="auth-left-footer">&copy; {{ date('Y') }} Aruvi on the Cliff. All rights reserved.</div>
@@ -352,21 +339,6 @@
                         <button type="button" class="toggle-pw" onclick="togglePw('password_confirmation',this)"><i class="bi bi-eye"></i></button>
                     </div>
 
-                    <div class="field-wrap full">
-                        <label for="admin_secret">Admin Registration Key</label>
-                        <i class="bi bi-key field-icon"></i>
-                        <input type="password" id="admin_secret" name="admin_secret"
-                               placeholder="Enter the secret registration key"
-                               class="{{ $errors->has('admin_secret') ? 'is-invalid' : '' }}"
-                               required>
-                        <button type="button" class="toggle-pw" onclick="togglePw('admin_secret',this)"><i class="bi bi-eye"></i></button>
-                        @error('admin_secret')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                </div>
-
-                <div class="secret-hint">
-                    <i class="bi bi-info-circle-fill flex-shrink-0 mt-1" style="color:var(--teal);"></i>
-                    The admin registration key is set by the resort system administrator in the server environment configuration.
                 </div>
 
                 <button type="submit" class="btn-auth">

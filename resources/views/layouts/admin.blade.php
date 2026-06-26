@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href="{{ asset('css/resort.css') }}" rel="stylesheet">
+    @stack('styles')
 </head>
 <body class="bg-admin-light">
 <div class="admin-shell">
@@ -26,9 +27,30 @@
             <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                 <i class="bi bi-graph-up-arrow me-2"></i> Dashboard Analytics
             </a>
+            @if(auth()->user()->isSuperAdmin())
             <a href="{{ route('admin.theme.customization') }}" class="{{ request()->routeIs('admin.theme.customization') ? 'active' : '' }}">
                 <i class="bi bi-palette-fill me-2"></i> Theme Customization
             </a>
+            @endif
+
+            @php
+                $pendingCount = auth()->user()->isSuperAdmin()
+                    ? \App\Models\User::where('status','pending')->count()
+                    : 0;
+            @endphp
+
+            @if(auth()->user()->isSuperAdmin())
+            <small class="text-uppercase text-teal tracking-wider extra-small fw-bold opacity-75 d-block mt-4 mb-2">Super Admin</small>
+            <a href="{{ route('admin.approvals.index') }}" class="d-flex align-items-center justify-content-between {{ request()->routeIs('admin.approvals.*') ? 'active' : '' }}">
+                <span><i class="bi bi-person-check me-2"></i> User Approvals</span>
+                @if($pendingCount > 0)
+                    <span class="badge bg-danger text-white">{{ $pendingCount }}</span>
+                @endif
+            </a>
+            <a href="{{ route('admin.role-permissions.index') }}" class="{{ request()->routeIs('admin.role-permissions.*') ? 'active' : '' }}">
+                <i class="bi bi-shield-lock me-2"></i> Roles &amp; Permissions
+            </a>
+            @endif
             
             @php
                 $sidebarGroups = [
@@ -62,8 +84,16 @@
             @endphp
 
             @foreach($sidebarGroups as $groupName => $items)
+                @php
+                    $visibleItems = collect($items)->filter(function($config, $key) {
+                        $resource = $key === 'contact-messages' ? 'contact-messages' : $key;
+                        if($key === 'policies') $resource = 'policies';
+                        return auth()->user()->hasPermission("{$resource}.view");
+                    });
+                @endphp
+                @if($visibleItems->isNotEmpty())
                 <small class="text-uppercase text-teal tracking-wider extra-small fw-bold opacity-75 d-block mt-4 mb-2">{{ $groupName }}</small>
-                @foreach($items as $key => $config)
+                @foreach($visibleItems as $key => $config)
                     @php
                         $itemRoute = $config['route'] ?? route('admin.resources.index', $key);
                         $isMessagesRoute = isset($config['route']) && $config['route'];
@@ -75,9 +105,13 @@
                         @endif
                     </a>
                 @endforeach
+                @endif
             @endforeach
             
             <hr class="opacity-25 my-2" style="border-color: rgba(0,140,149,0.2);">
+            <a href="{{ route('admin.profile') }}" class="{{ request()->routeIs('admin.profile') ? 'active' : '' }}">
+                <i class="bi bi-person-circle me-2"></i> My Profile
+            </a>
             <a href="{{ route('home') }}" target="_blank">
                 <i class="bi bi-globe2 me-2"></i> View Live Site
             </a>
@@ -107,10 +141,12 @@
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-white" style="font-size: 0.6rem; min-width: 18px; height: 18px;">{{ $unreadMessageCount }}</span>
                     @endif
                 </a>
-                <span class="badge bg-teal-soft text-teal font-sans px-2 px-sm-3 py-2 d-flex align-items-center gap-1">
+                <a href="{{ route('admin.profile') }}"
+                   class="badge bg-teal-soft text-teal font-sans px-2 px-sm-3 py-2 d-flex align-items-center gap-1 text-decoration-none"
+                   title="My Profile">
                     <i class="bi bi-person-badge-fill"></i>
                     <span class="d-none d-sm-inline">{{ auth()->user()->name }}</span>
-                </span>
+                </a>
             </div>
         </header>
         
@@ -173,7 +209,17 @@
 
 <div id="sidebarOverlay" class="sidebar-overlay"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+@stack('scripts')
 <script>
+// Auto-close flash alerts after 1 second (globally for all admin pages)
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.admin-main .alert').forEach(function (el) {
+        setTimeout(function () {
+            var instance = bootstrap.Alert.getOrCreateInstance(el);
+            if (instance) instance.close();
+        }, 1500);
+    });
+});
 document.addEventListener('DOMContentLoaded', function() {
     // ── Mobile Sidebar Toggle ──────────────────────────────────────────
     const sidebarToggle = document.getElementById('sidebarToggle');
@@ -231,6 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Intercept form submissions inside the main admin panel content area
     document.querySelectorAll('.admin-main form').forEach(function(form) {
         if (form.id === 'modalDeleteForm') return;
+        if (form.hasAttribute('data-no-ajax')) return; // skip forms that want normal submit
         
         form.addEventListener('submit', function(e) {
             e.preventDefault();

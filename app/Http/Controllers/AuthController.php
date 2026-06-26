@@ -23,22 +23,47 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            $request->user()->update(['last_login_at' => now()]);
-
-            if (! $request->user()->isAdmin()) {
-                Auth::logout();
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return back()->withErrors(['email' => 'Only resort administrators can access this panel.'])->onlyInput('email');
-            }
-
-            return redirect()->intended(route('admin.dashboard'));
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            return back()->withErrors(['email' => 'These credentials do not match our records.'])->onlyInput('email');
         }
 
-        return back()->withErrors(['email' => 'These credentials do not match our records.'])->onlyInput('email');
+        $user = $request->user();
+
+        // Block pending accounts
+        if ($user->isPending()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Your account is pending approval by the Super Admin. You will be notified once approved.',
+            ])->onlyInput('email');
+        }
+
+        // Block suspended accounts
+        if ($user->status === 'suspended') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors([
+                'email' => 'Your account has been suspended. Please contact the Super Admin.',
+            ])->onlyInput('email');
+        }
+
+        // Block non-admins
+        if (! $user->isAdmin()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return back()->withErrors(['email' => 'Only resort administrators can access this panel.'])->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
+        $user->update(['last_login_at' => now()]);
+
+        return redirect()->intended(route('admin.dashboard'));
     }
 
     public function showRegister()
@@ -49,34 +74,27 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name'                  => ['required', 'string', 'max:255'],
-            'email'                 => ['required', 'email', 'max:255', 'unique:users,email'],
-            'phone'                 => ['nullable', 'string', 'max:40'],
-            'password'              => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
-            'admin_secret'          => ['required', 'string'],
+            'name'         => ['required', 'string', 'max:255'],
+            'email'        => ['required', 'email', 'max:255', 'unique:users,email'],
+            'phone'        => ['nullable', 'string', 'max:40'],
+            'password'     => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ]);
 
-        // Simple secret key to prevent public registrations
-        if ($data['admin_secret'] !== config('app.admin_register_secret', env('ADMIN_REGISTER_SECRET', 'aruvi@admin2024'))) {
-            return back()->withErrors(['admin_secret' => 'Invalid admin registration key.'])->withInput();
-        }
+        // Assign admin role but set status to 'pending' — super-admin must approve
+        $adminRole = Role::where('slug', 'admin')->first()
+                  ?? Role::where('slug', 'manager')->first();
 
-        $adminRole = Role::where('slug', 'super-admin')->first()
-                  ?? Role::where('slug', 'admin')->first();
-
-        $user = User::create([
+        User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
             'phone'    => $data['phone'] ?? null,
             'password' => Hash::make($data['password']),
             'role_id'  => $adminRole?->id,
-            'status'   => 'active',
+            'status'   => 'pending',   // ← awaiting super-admin approval
         ]);
 
-        Auth::login($user);
-        $request->session()->regenerate();
-
-        return redirect()->route('admin.dashboard')->with('success', 'Welcome, ' . $user->name . '! Your admin account has been created.');
+        return redirect()->route('admin.login')
+            ->with('success', 'Registration submitted! Your account is pending approval by the Super Admin.');
     }
 
     public function logout(Request $request)

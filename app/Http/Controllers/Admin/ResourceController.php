@@ -36,6 +36,7 @@ class ResourceController extends Controller
 
     public function index(string $resource)
     {
+        abort_unless(auth()->user()->hasPermission("{$resource}.view"), 403);
         $config = $this->config($resource);
 
         $items = $config['model']::latest()->paginate(15);
@@ -53,6 +54,7 @@ class ResourceController extends Controller
 
     public function create(string $resource)
     {
+        abort_unless(auth()->user()->hasPermission("{$resource}.create"), 403);
         $config = $this->config($resource);
         $relations = $this->getRelations($config);
 
@@ -78,6 +80,7 @@ class ResourceController extends Controller
 
     public function store(Request $request, string $resource)
     {
+        abort_unless(auth()->user()->hasPermission("{$resource}.create"), 403);
         $config = $this->config($resource);
 
         // Hero slides: enforce max 5 limit on store too
@@ -109,6 +112,7 @@ class ResourceController extends Controller
 
     public function edit(string $resource, int $id)
     {
+        abort_unless(auth()->user()->hasPermission("{$resource}.edit"), 403);
         $config = $this->config($resource);
         $relations = $this->getRelations($config);
 
@@ -132,6 +136,7 @@ class ResourceController extends Controller
 
     public function update(Request $request, string $resource, int $id)
     {
+        abort_unless(auth()->user()->hasPermission("{$resource}.edit"), 403);
         $config = $this->config($resource);
         $item = $config['model']::findOrFail($id);
 
@@ -155,6 +160,7 @@ class ResourceController extends Controller
 
     public function destroy(string $resource, int $id)
     {
+        abort_unless(auth()->user()->hasPermission("{$resource}.delete"), 403);
         $config = $this->config($resource);
         $config['model']::findOrFail($id)->delete();
 
