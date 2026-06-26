@@ -15,7 +15,7 @@
 <div class="admin-shell">
     <aside class="admin-sidebar shadow-sm">
         <div class="sidebar-header border-bottom pb-3 mb-3 d-flex align-items-center gap-2" style="border-color: rgba(0,140,149,0.12) !important;">
-            <img src="{{ asset($settings['admin_logo'] ?? 'images/logo.svg') }}" alt="Logo" style="height: 34px; {{ !isset($settings['admin_logo']) || str_contains($settings['admin_logo'], 'logo.svg') ? 'filter: sepia(1) saturate(5) hue-rotate(148deg) brightness(0.6);' : '' }}">
+            <img src="{{ asset($settings['admin_logo'] ?? 'images/default/logo.ico') }}" alt="Logo" style="height: 34px; width: auto; object-fit: contain;">
             <div>
                 <h6 class="text-ink font-serif mb-0 fw-bold" style="font-size:0.92rem;">Aruvi Administration</h6>
                 <small class="text-teal extra-small">Resort Control Panel</small>

@@ -26,9 +26,9 @@
                     {{-- Website Logo --}}
                     <div class="mb-4 pb-4 border-bottom border-light">
                         <label class="form-label fw-bold small text-ink">Website Logo</label>
-                        <input class="form-control mb-2" type="file" name="site_logo" accept="image/*">
+                        <input class="form-control mb-2" type="file" name="site_logo" accept="image/*,.ico">
                         <div class="d-inline-flex align-items-center gap-3 bg-light px-3 py-2 rounded-3 customization-logo-preview">
-                            <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}"
+                            <img src="{{ asset($settings['site_logo'] ?? 'images/default/logo.ico') }}"
                                  alt="Website Logo" style="height:40px;max-width:120px;object-fit:contain;">
                             <small class="text-muted">Current logo</small>
                         </div>
@@ -39,7 +39,7 @@
                         <label class="form-label fw-bold small text-ink">Navbar Brand Image</label>
                         <input class="form-control mb-2" type="file" name="site_brand_image" accept="image/*">
                         <div class="d-inline-flex align-items-center gap-3 bg-light px-3 py-2 rounded-3 customization-logo-preview">
-                            <img src="{{ asset($settings['site_brand_image'] ?? 'images/logo.svg') }}"
+                            <img src="{{ asset($settings['site_brand_image'] ?? 'images/default/brand.png') }}"
                                  alt="Navbar Brand" style="height:40px;max-width:120px;object-fit:contain;">
                             <small class="text-muted">Current navbar image</small>
                         </div>
@@ -48,9 +48,9 @@
                     {{-- Admin Logo --}}
                     <div>
                         <label class="form-label fw-bold small text-ink">Admin Panel Logo</label>
-                        <input class="form-control mb-2" type="file" name="admin_logo" accept="image/*">
+                        <input class="form-control mb-2" type="file" name="admin_logo" accept="image/*,.ico">
                         <div class="d-inline-flex align-items-center gap-3 bg-dark px-3 py-2 rounded-3 customization-logo-preview">
-                            <img src="{{ asset($settings['admin_logo'] ?? 'images/logo.svg') }}"
+                            <img src="{{ asset($settings['admin_logo'] ?? 'images/default/logo.ico') }}"
                                  alt="Admin Logo" style="height:40px;max-width:120px;object-fit:contain;">
                             <small class="text-white opacity-50">Current admin logo</small>
                         </div>

@@ -34,11 +34,11 @@ class DatabaseSeeder extends Seeder
         $adminRole = Role::updateOrCreate(['slug' => 'super-admin'], ['name' => 'Super Admin', 'is_system' => true]);
         $guestRole = Role::updateOrCreate(['slug' => 'guest'], ['name' => 'Guest', 'is_system' => true]);
 
-        User::updateOrCreate(['email' => 'admin@aruvi.test'], [
+        User::updateOrCreate(['email' => 'admin@aruvi.resort'], [
             'role_id' => $adminRole->id,
             'name' => 'Aruvi Administrator',
             'phone' => '+91 90000 00000',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('1@AruviResort'),
             'status' => 'active',
         ]);
 
@@ -51,17 +51,18 @@ class DatabaseSeeder extends Seeder
         ]);
 
         foreach ([
-            ['site', 'site_name', 'Aruvi on the Cliff', 'text'],
-            ['site', 'site_logo', '/images/logo.svg', 'file'],
-            ['site', 'admin_logo', '/images/logo.svg', 'file'],
-            ['site', 'about_image', 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80', 'file'],
+            ['site', 'site_name',    'Aruvi on the Cliff', 'text'],
+            ['site', 'site_logo',        '/images/default/logo.ico',   'file'],
+            ['site', 'admin_logo',       '/images/default/logo.ico',   'file'],
+            ['site', 'site_brand_image', '/images/default/brand.png',  'file'],
+            ['site', 'about_image',  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80', 'file'],
             ['site', 'dining_image', 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80', 'file'],
             ['site', 'contact_email', 'reservations@aruvi.test', 'email'],
             ['site', 'contact_phone', '+91 90000 00000', 'text'],
-            ['seo', 'meta_title', 'Aruvi on the Cliff - Luxury Beachside Resort', 'text'],
-            ['payments', 'razorpay_key', '', 'text'],
-            ['payments', 'stripe_key', '', 'text'],
-            ['payments', 'paypal_client_id', '', 'text'],
+            ['seo',  'meta_title',   'Aruvi on the Cliff - Luxury Beachside Resort', 'text'],
+            ['payments', 'razorpay_key',    '', 'text'],
+            ['payments', 'stripe_key',      '', 'text'],
+            ['payments', 'paypal_client_id','', 'text'],
             ['maps', 'google_maps_embed', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3941.5204481078726!2d76.7004967!3d8.7403549!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b05efb512d38999%3A0x3521e5b9dfe724c8!2sAruvi%20Onthe%20Cliff!5e0!3m2!1sen!2sin!4v1718360000000!5m2!1sen!2sin', 'text'],
         ] as [$group, $key, $value, $type]) {
             Setting::updateOrCreate(['key' => $key], compact('group', 'value', 'type'));

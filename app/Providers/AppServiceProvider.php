@@ -36,7 +36,13 @@ class AppServiceProvider extends ServiceProvider
 
         try {
             if (Schema::hasTable('settings')) {
-                view()->share('settings', Setting::all()->pluck('value', 'key'));
+                $settings = Setting::all()->pluck('value', 'key');
+
+                // Resolve branding paths: prefer uploads/branding/ upload,
+                // fall back to images/default/ if no uploaded file exists there.
+                $settings = $this->resolveBrandingDefaults($settings);
+
+                view()->share('settings', $settings);
             }
         } catch (\Throwable $e) {
             view()->share('settings', collect());
@@ -51,5 +57,29 @@ class AppServiceProvider extends ServiceProvider
         } catch (\Throwable $e) {
             // Ignore bootstrap errors when the database is unavailable or not migrated yet.
         }
+    }
+
+    /**
+     * For each branding key, if the stored value points to a file that no longer
+     * exists (or no value is set), fall back to the corresponding default image.
+     */
+    private function resolveBrandingDefaults(\Illuminate\Support\Collection $settings): \Illuminate\Support\Collection
+    {
+        $defaults = [
+            'site_logo'        => '/images/default/logo.ico',
+            'admin_logo'       => '/images/default/logo.ico',
+            'site_brand_image' => '/images/default/brand.png',
+        ];
+
+        foreach ($defaults as $key => $defaultPath) {
+            $value = $settings->get($key, '');
+
+            // If value is empty or the file doesn't exist on disk → use default
+            if (empty($value) || !file_exists(public_path(ltrim($value, '/')))) {
+                $settings->put($key, $defaultPath);
+            }
+        }
+
+        return $settings;
     }
 }

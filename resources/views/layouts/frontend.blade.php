@@ -17,12 +17,8 @@
 <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand brand-mark d-flex align-items-center gap-2" href="{{ route('home') }}#home">
-            <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}" alt="Aruvi on the Cliff" class="brand-logo">
-            @if(isset($settings['site_brand_image']))
-                <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 52px; max-width: 220px; object-fit: contain;">
-            @else
-                <span>Aruvi on the Cliff</span>
-            @endif
+            <img src="{{ asset($settings['site_logo'] ?? 'images/default/logo.ico') }}" alt="Aruvi on the Cliff" class="brand-logo">
+            <img src="{{ asset($settings['site_brand_image'] ?? 'images/default/brand.png') }}" alt="Aruvi on the Cliff" style="height: 52px; max-width: 220px; object-fit: contain;">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"><span class="navbar-toggler-icon"></span></button>
         <div id="nav" class="collapse navbar-collapse">
@@ -58,12 +54,8 @@
             <div class="col-lg-4 col-md-6">
                 <div class="footer-brand mb-3">
                     <a href="{{ route('home') }}#home" class="d-flex align-items-center gap-3 text-decoration-none">
-                        <img src="{{ asset($settings['site_logo'] ?? 'images/logo.svg') }}" alt="Aruvi Logo" class="footer-logo" style="height: 64px; width: auto; {{ (!isset($settings['site_logo']) || str_contains($settings['site_logo'] ?? '', 'logo.svg')) ? 'filter: brightness(0) invert(1);' : '' }}">
-                        @if(isset($settings['site_brand_image']))
-                            <img src="{{ asset($settings['site_brand_image']) }}" alt="Aruvi on the Cliff" style="height: 64px; max-width: 220px; object-fit: contain;">
-                        @else
-                            <span class="text-white fs-4 fw-bold font-serif">Aruvi on the Cliff</span>
-                        @endif
+                        <img src="{{ asset($settings['site_logo'] ?? 'images/default/logo.ico') }}" alt="Aruvi Logo" class="footer-logo" style="height:64px;width:auto;">
+                        <img src="{{ asset($settings['site_brand_image'] ?? 'images/default/brand.png') }}" alt="Aruvi on the Cliff" style="height:64px;max-width:220px;object-fit:contain;">
                     </a>
                 </div>
                 <p class="text-muted mb-4 lead-sm">An architectural tribute to the beauty of the coast. Experience the tranquil overlap of luxury, sea breeze, and cliffside dining.</p>
