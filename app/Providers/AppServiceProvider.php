@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Pagination\Paginator;
 use App\Models\ContactMessage;
 use App\Models\Setting;
 
@@ -33,6 +34,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        // Use our custom teal pagination view everywhere
+        Paginator::defaultView('vendor.pagination.aruvi');
 
         try {
             if (Schema::hasTable('settings')) {

@@ -157,14 +157,28 @@
             color: var(--ink);
             margin-bottom: 0.3rem;
         }
+        /* Icon anchored to .field-input-wrap, not .field-wrap — stays stable when errors appear */
+        .field-input-wrap {
+            position: relative;
+        }
         .field-icon {
             position: absolute;
             left: 0.85rem;
-            bottom: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
             color: #9ab5b7;
             font-size: 0.88rem;
             pointer-events: none;
         }
+        .toggle-pw {
+            position: absolute;
+            right: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none; border: none; padding: 0;
+            color: #9ab5b7; cursor: pointer; font-size: 0.88rem;
+        }
+        .toggle-pw:hover { color: var(--teal); }
         .field-wrap input {
             width: 100%;
             padding: 0.65rem 2.5rem 0.65rem 2.5rem;
@@ -183,14 +197,12 @@
         }
         .field-wrap input.is-invalid { border-color:#dc3545; background:#fff8f8; }
         .invalid-feedback { display:block; color:#dc3545; font-size:0.76rem; margin-top:0.22rem; }
-        .toggle-pw {
-            position: absolute;
-            right: 0.8rem;
-            bottom: 0.7rem;
-            background: none; border: none; padding: 0;
-            color: #9ab5b7; cursor: pointer; font-size: 0.88rem;
+        /* Suppress Bootstrap's built-in validation icon that conflicts with our custom icons */
+        .field-input-wrap input.is-invalid,
+        .field-input-wrap input.is-valid {
+            background-image: none !important;
+            padding-right: 2.5rem !important;
         }
-        .toggle-pw:hover { color: var(--teal); }
 
         .pw-strength-bar { height:3px; border-radius:2px; margin-top:0.35rem; background:#e0eced; overflow:hidden; }
         .pw-strength-bar-fill { height:100%; border-radius:2px; width:0%; transition:width 0.3s,background 0.3s; }
@@ -289,54 +301,64 @@
 
                     <div class="field-wrap">
                         <label for="name">Full Name</label>
-                        <i class="bi bi-person field-icon"></i>
-                        <input type="text" id="name" name="name" value="{{ old('name') }}"
-                               placeholder="Your full name"
-                               class="{{ $errors->has('name') ? 'is-invalid' : '' }}"
-                               required autocomplete="name">
+                        <div class="field-input-wrap">
+                            <i class="bi bi-person field-icon"></i>
+                            <input type="text" id="name" name="name" value="{{ old('name') }}"
+                                   placeholder="Your full name"
+                                   class="{{ $errors->has('name') ? 'is-invalid' : '' }}"
+                                   required autocomplete="name">
+                        </div>
                         @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="field-wrap">
                         <label for="phone">Phone <span style="color:#9ab5b7;font-weight:400;">(optional)</span></label>
-                        <i class="bi bi-telephone field-icon"></i>
-                        <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
-                               placeholder="+91 90000 00000"
-                               class="{{ $errors->has('phone') ? 'is-invalid' : '' }}"
-                               autocomplete="tel">
+                        <div class="field-input-wrap">
+                            <i class="bi bi-telephone field-icon"></i>
+                            <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
+                                   placeholder="+91 90000 00000"
+                                   class="{{ $errors->has('phone') ? 'is-invalid' : '' }}"
+                                   autocomplete="tel">
+                        </div>
                         @error('phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="field-wrap full">
                         <label for="email">Email Address</label>
-                        <i class="bi bi-envelope field-icon"></i>
-                        <input type="email" id="email" name="email" value="{{ old('email') }}"
-                               placeholder="admin@aruvi.test"
-                               class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
-                               required autocomplete="email">
+                        <div class="field-input-wrap">
+                            <i class="bi bi-envelope field-icon"></i>
+                            <input type="email" id="email" name="email" value="{{ old('email') }}"
+                                   placeholder="admin@aruvi.test"
+                                   class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
+                                   required autocomplete="email">
+                        </div>
                         @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
 
                     <div class="field-wrap">
                         <label for="password">Password</label>
-                        <i class="bi bi-lock field-icon"></i>
-                        <input type="password" id="password" name="password"
-                               placeholder="Min. 8 characters"
-                               class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
-                               required autocomplete="new-password"
-                               oninput="checkStrength(this.value)">
-                        <button type="button" class="toggle-pw" onclick="togglePw('password',this)"><i class="bi bi-eye"></i></button>
+                        <div class="field-input-wrap">
+                            <i class="bi bi-lock field-icon"></i>
+                            <input type="password" id="password" name="password"
+                                   placeholder="Min. 8 characters"
+                                   class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
+                                   required autocomplete="new-password"
+                                   oninput="checkStrength(this.value)">
+                            <button type="button" class="toggle-pw" onclick="togglePw('password',this)"><i class="bi bi-eye"></i></button>
+                        </div>
                         @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         <div class="pw-strength-bar"><div class="pw-strength-bar-fill" id="pwBar"></div></div>
                     </div>
 
                     <div class="field-wrap">
                         <label for="password_confirmation">Confirm Password</label>
-                        <i class="bi bi-lock-fill field-icon"></i>
-                        <input type="password" id="password_confirmation" name="password_confirmation"
-                               placeholder="Repeat password"
-                               required autocomplete="new-password">
-                        <button type="button" class="toggle-pw" onclick="togglePw('password_confirmation',this)"><i class="bi bi-eye"></i></button>
+                        <div class="field-input-wrap">
+                            <i class="bi bi-lock-fill field-icon"></i>
+                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                   placeholder="Repeat password"
+                                   required autocomplete="new-password">
+                            <button type="button" class="toggle-pw" onclick="togglePw('password_confirmation',this)"><i class="bi bi-eye"></i></button>
+                        </div>
                     </div>
 
                 </div>

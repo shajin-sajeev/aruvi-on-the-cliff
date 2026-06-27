@@ -31,6 +31,11 @@
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#attractions">Attractions</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#reviews">Reviews</a></li>
                 <li class="nav-item"><a class="nav-link" href="{{ route('home') }}#contact">Contact</a></li>
+                <li class="nav-item ms-lg-2">
+                    <a class="btn btn-teal px-3 py-2" href="#">
+                        <i class="bi bi-calendar-check me-1"></i>Book Now
+                    </a>
+                </li>
                 @auth
                     @if(auth()->user()->isAdmin())<li class="nav-item"><a class="nav-link" href="{{ route('admin.dashboard') }}">Admin</a></li>@endif
                 @endauth
@@ -109,21 +114,21 @@
                         <i class="bi bi-telephone text-teal"></i>
                         <div>
                             <small class="text-muted d-block">Reservations</small>
-                            <span class="text-light">{{ $settings['contact_phone'] ?? '+91 90000 00000' }}</span>
+                            <span class="text-light">{{ $settings['contact_phone'] ?? '+91 9497473320' }}</span>
                         </div>
                     </li>
                     <li class="d-flex align-items-start gap-3 mb-3">
                         <i class="bi bi-envelope-open text-teal"></i>
                         <div>
                             <small class="text-muted d-block">Email Address</small>
-                            <a href="mailto:{{ $settings['contact_email'] ?? 'reservations@aruvi.test' }}" class="text-light text-decoration-none hover-teal">{{ $settings['contact_email'] ?? 'reservations@aruvi.test' }}</a>
+                            <a href="mailto:{{ $settings['contact_email'] ?? 'aruvionthecliff@gmail.com' }}" class="text-light text-decoration-none hover-teal">{{ $settings['contact_email'] ?? 'aruvionthecliff@gmail.com' }}</a>
                         </div>
                     </li>
                     <li class="d-flex align-items-start gap-3">
                         <i class="bi bi-geo-alt text-teal"></i>
                         <div>
                             <small class="text-muted d-block">Location</small>
-                            <span class="text-light">Cliff Road, Beachside Coast, Varkala, Kerala</span>
+                            <span class="text-light">North Cliff in Varkala, Kerala</span>
                         </div>
                     </li>
                 </ul>

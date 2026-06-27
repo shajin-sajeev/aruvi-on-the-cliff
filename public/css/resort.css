@@ -1437,3 +1437,95 @@ img { max-width: 100%; height: auto; }
     .admin-shell { display: block; }
     .admin-main { padding: 0; }
 }
+
+/* ================================================================
+   ARUVI PAGINATION — shared across frontend & admin
+   ================================================================ */
+.aruvi-pagination {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 2rem;
+}
+
+.aruvi-pag-list {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.aruvi-pag-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 38px;
+    height: 38px;
+    padding: 0 0.6rem;
+    border-radius: 9px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1.5px solid #dde8e9;
+    background: #fff;
+    color: #4a6a6c;
+    transition: all 0.18s ease;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.aruvi-pag-btn:hover {
+    background: var(--teal-soft);
+    border-color: var(--teal);
+    color: var(--teal);
+}
+
+.aruvi-pag-item.active .aruvi-pag-btn {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,140,149,0.25);
+    cursor: default;
+}
+
+.aruvi-pag-item.disabled .aruvi-pag-btn {
+    opacity: 0.38;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.aruvi-pag-dots {
+    border: none;
+    background: transparent;
+    color: #9ab5b7;
+    letter-spacing: 0.05em;
+    cursor: default;
+}
+
+.aruvi-pag-info {
+    font-size: 0.78rem;
+    color: #9ab5b7;
+    margin: 0;
+}
+
+.aruvi-pag-info strong {
+    color: var(--teal);
+    font-weight: 700;
+}
+
+/* Admin context — slightly smaller to fit dense tables */
+.admin-main .aruvi-pagination {
+    margin-top: 1rem;
+}
+
+.admin-main .aruvi-pag-btn {
+    min-width: 34px;
+    height: 34px;
+    font-size: 0.82rem;
+    border-radius: 8px;
+}

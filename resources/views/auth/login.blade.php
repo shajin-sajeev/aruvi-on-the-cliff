@@ -155,14 +155,33 @@
             color: var(--ink);
             margin-bottom: 0.35rem;
         }
-        .field-icon {
+
+        /* Icon + toggle scoped to input wrapper — never shifts when error text appears below */
+        .field-input-wrap {
+            position: relative;
+        }
+        .field-input-wrap .field-icon {
             position: absolute;
             left: 0.9rem;
-            bottom: 0.72rem;
+            top: 50%;
+            transform: translateY(-50%);
             color: #9ab5b7;
             font-size: 0.9rem;
             pointer-events: none;
         }
+        .field-input-wrap .toggle-pw {
+            position: absolute;
+            right: 0.85rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 0;
+            color: #9ab5b7;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .field-input-wrap .toggle-pw:hover { color: var(--teal); }
         .field-wrap input {
             width: 100%;
             padding: 0.7rem 2.6rem 0.7rem 2.6rem;
@@ -172,7 +191,7 @@
             color: var(--ink);
             background: #f8fdfd;
             outline: none;
-            transition: all 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         .field-wrap input:focus {
             border-color: var(--teal);
@@ -180,19 +199,13 @@
             box-shadow: 0 0 0 3px rgba(0,140,149,0.1);
         }
         .field-wrap input.is-invalid { border-color: #dc3545; background: #fff8f8; }
-        .invalid-feedback { display: block; color: #dc3545; font-size: 0.78rem; margin-top: 0.25rem; }
-        .toggle-pw {
-            position: absolute;
-            right: 0.85rem;
-            bottom: 0.72rem;
-            background: none;
-            border: none;
-            padding: 0;
-            color: #9ab5b7;
-            cursor: pointer;
-            font-size: 0.9rem;
+        .invalid-feedback { display: block; color: #dc3545; font-size: 0.78rem; margin-top: 0.3rem; }
+        /* Suppress Bootstrap's built-in validation icon that conflicts with our custom icons */
+        .field-input-wrap input.is-invalid,
+        .field-input-wrap input.is-valid {
+            background-image: none !important;
+            padding-right: 2.6rem !important;
         }
-        .toggle-pw:hover { color: var(--teal); }
 
         .auth-row {
             display: flex;
@@ -286,7 +299,6 @@
             <p>Manage rooms, dining, gallery, guests, and all resort content from one elegant dashboard.</p>
             <ul class="auth-features">
                 <li><i class="bi bi-check-circle-fill"></i> Full CMS for all website sections</li>
-                <li><i class="bi bi-check-circle-fill"></i> Real-time booking &amp; enquiry management</li>
                 <li><i class="bi bi-check-circle-fill"></i> Media uploads &amp; theme customization</li>
                 <li><i class="bi bi-check-circle-fill"></i> Role-based secure access control</li>
             </ul>
@@ -316,25 +328,29 @@
 
                 <div class="field-wrap">
                     <label for="email">Email Address</label>
-                    <i class="bi bi-envelope field-icon"></i>
-                    <input type="email" id="email" name="email"
-                           value="{{ old('email') }}"
-                           placeholder="admin@aruvi.test"
-                           class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
-                           required autofocus autocomplete="email">
+                    <div class="field-input-wrap">
+                        <i class="bi bi-envelope field-icon"></i>
+                        <input type="email" id="email" name="email"
+                               value="{{ old('email') }}"
+                               placeholder="admin@aruvi.test"
+                               class="{{ $errors->has('email') ? 'is-invalid' : '' }}"
+                               required autofocus autocomplete="email">
+                    </div>
                     @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
                 <div class="field-wrap">
                     <label for="password">Password</label>
-                    <i class="bi bi-lock field-icon"></i>
-                    <input type="password" id="password" name="password"
-                           placeholder="Enter your password"
-                           class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
-                           required autocomplete="current-password">
-                    <button type="button" class="toggle-pw" onclick="togglePw('password',this)" aria-label="Toggle">
-                        <i class="bi bi-eye"></i>
-                    </button>
+                    <div class="field-input-wrap">
+                        <i class="bi bi-lock field-icon"></i>
+                        <input type="password" id="password" name="password"
+                               placeholder="Enter your password"
+                               class="{{ $errors->has('password') ? 'is-invalid' : '' }}"
+                               required autocomplete="current-password">
+                        <button type="button" class="toggle-pw" onclick="togglePw('password',this)" aria-label="Toggle">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                     @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
