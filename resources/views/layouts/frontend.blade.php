@@ -81,6 +81,7 @@
                                     'facebook'       => 'bi-facebook',
                                     'youtube'        => 'bi-youtube',
                                     'twitter', 'x'  => 'bi-twitter-x',
+                                    'threads'        => 'bi-threads',
                                     'linkedin'       => 'bi-linkedin',
                                     'pinterest'      => 'bi-pinterest',
                                     'tiktok'         => 'bi-tiktok',

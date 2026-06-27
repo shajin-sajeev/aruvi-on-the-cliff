@@ -269,8 +269,18 @@ class DatabaseSeeder extends Seeder
         }
 
         // ── Social Links ───────────────────────────────────────────
-        foreach (['Instagram', 'Facebook', 'YouTube'] as $platform) {
-            SocialLink::updateOrCreate(['platform' => $platform], ['url' => 'https://example.com/' . strtolower($platform), 'is_active' => true]);
+        $socialLinks = [
+            ['platform' => 'Facebook',  'url' => 'https://www.facebook.com/share/18o4HeYhbZ/'],
+            ['platform' => 'Threads',   'url' => 'https://www.threads.com/@aruvi_onthecliff'],
+            ['platform' => 'Twitter',   'url' => 'https://x.com/Aruviontheclirf'],
+            ['platform' => 'Instagram', 'url' => 'https://www.instagram.com/aruvi_onthecliff?igsh=MTBzOHFyb2c1YnozdQ=='],
+        ];
+
+        foreach ($socialLinks as $link) {
+            SocialLink::updateOrCreate(
+                ['platform' => $link['platform']],
+                ['url' => $link['url'], 'is_active' => true]
+            );
         }
     }
 }

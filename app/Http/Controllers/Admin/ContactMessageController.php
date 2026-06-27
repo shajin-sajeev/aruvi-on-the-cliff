@@ -10,27 +10,30 @@ class ContactMessageController extends Controller
 {
     public function index()
     {
+        abort_unless(auth()->user()->hasPermission('contact-messages.view'), 403);
         return view('admin.messages.index', [
-            'messages' => ContactMessage::latest()->paginate(12),
+            'messages'    => ContactMessage::latest()->paginate(12),
             'unreadCount' => ContactMessage::where('status', 'new')->count(),
         ]);
     }
 
     public function show(ContactMessage $message)
     {
+        abort_unless(auth()->user()->hasPermission('contact-messages.view'), 403);
         if ($message->status === 'new') {
             $message->update(['status' => 'read']);
             $message->refresh();
         }
 
         return view('admin.messages.show', [
-            'message' => $message,
+            'message'     => $message,
             'unreadCount' => ContactMessage::where('status', 'new')->count(),
         ]);
     }
 
     public function markAsRead(ContactMessage $message)
     {
+        abort_unless(auth()->user()->hasPermission('contact-messages.edit'), 403);
         if ($message->status !== 'read') {
             $message->update(['status' => 'read']);
         }
@@ -40,6 +43,7 @@ class ContactMessageController extends Controller
 
     public function destroy(ContactMessage $message)
     {
+        abort_unless(auth()->user()->hasPermission('contact-messages.delete'), 403);
         $message->delete();
 
         return redirect()->route('admin.messages.index')->with('success', 'Message deleted successfully.');

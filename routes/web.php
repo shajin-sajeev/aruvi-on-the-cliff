@@ -34,9 +34,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 /* ── Auth (guest only) ────────────────────────────────────── */
 Route::middleware('guest')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/login',    [AuthController::class, 'showLogin'])->name('login');
-    Route::post('/login',   [AuthController::class, 'login'])->name('login.store');
+    Route::post('/login',   [AuthController::class, 'login'])->name('login.store')->middleware('throttle:5,1');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-    Route::post('/register',[AuthController::class, 'register'])->name('register.store');
+    Route::post('/register',[AuthController::class, 'register'])->name('register.store')->middleware('throttle:3,1');
 });
 
 /* ── Admin panel ──────────────────────────────────────────── */

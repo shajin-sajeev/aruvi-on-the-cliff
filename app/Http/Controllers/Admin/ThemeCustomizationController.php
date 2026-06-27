@@ -12,19 +12,21 @@ class ThemeCustomizationController extends Controller
 {
     public function show()
     {
+        abort_unless(auth()->user()->hasPermission('theme-customization.view'), 403);
         $settings = Setting::all()->pluck('value', 'key');
         return view('admin.customization', compact('settings'));
     }
 
     public function store(Request $request)
     {
+        abort_unless(auth()->user()->hasPermission('theme-customization.edit'), 403);
         try {
             $request->validate([
-                'site_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,ico|max:2048',
-                'admin_logo' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,webp,ico|max:2048',
-                'site_brand_image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
-                'about_image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
-                'dining_image' => 'nullable|file|image|mimes:jpeg,png,jpg,gif,svg,webp|max:4096',
+                'site_logo'        => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,ico|max:2048',
+                'admin_logo'       => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,ico|max:2048',
+                'site_brand_image' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:2048',
+                'about_image'      => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:4096',
+                'dining_image'     => 'nullable|file|mimes:jpeg,png,jpg,gif,webp|max:4096',
             ], [
                 'site_brand_image.image' => 'The navbar brand image must be a valid image file.',
                 'site_brand_image.mimes' => 'The navbar brand image must be a file of type: jpeg, png, jpg, gif, svg, webp.',

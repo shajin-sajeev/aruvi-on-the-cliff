@@ -187,7 +187,7 @@ class ResourceController extends Controller
             } elseif ($type === 'file') {
                 $fieldRules[] = $item ? 'nullable' : 'required';
                 $fieldRules[] = 'file';
-                $fieldRules[] = 'image';
+                $fieldRules[] = 'mimes:jpeg,png,jpg,gif,webp';
                 $fieldRules[] = 'max:10240';
             } else {
                 if (in_array($name, ['slug', 'short_description', 'description', 'seo_title', 'seo_description', 'discount_price', 'special_requests', 'distance', 'map_url', 'phone', 'icon'], true)) {

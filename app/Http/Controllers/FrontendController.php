@@ -100,14 +100,14 @@ class FrontendController extends Controller
     public function storeReview(Request $request)
     {
         Review::create($request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'rating' => ['required', 'integer', 'min:1', 'max:5'],
-            'title' => ['nullable', 'string', 'max:255'],
+            'name'    => ['required', 'string', 'max:255'],
+            'email'   => ['nullable', 'email', 'max:255'],
+            'rating'  => ['required', 'integer', 'min:1', 'max:5'],
+            'title'   => ['nullable', 'string', 'max:255'],
             'comment' => ['required', 'string', 'max:5000'],
-        ]) + ['user_id' => $request->user()?->id, 'is_approved' => true]);
+        ]) + ['user_id' => $request->user()?->id, 'is_approved' => false]); // Admin must approve
 
-        return back()->with('success', 'Thank you. Your review has been published.');
+        return back()->with('success', 'Thank you. Your review has been submitted and is pending approval.');
     }
 
     public function contact()
